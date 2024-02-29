@@ -1,0 +1,420 @@
+﻿@model IEMS_WEB.Areas.ProductionMaster.Models.ResponseModel.DSBalanceOpeningResponse;
+@{
+    ViewData["Title"] = "DSBalanceOpening";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+} 
+<script src="~/assets/js/translator/balanceopening.js"></script>
+
+<div class="page-title">
+    <div class="row">
+        <div class="col-12">
+            <h3 data-translate="Denatured Sprit Balance Opening">Denatured Sprit Balance Opening</h3>
+            @if (TempData["Alert"] != null)
+            {
+                @Html.Raw(TempData["Alert"])
+            }
+        </div>
+    </div>
+</div>
+@using (Html.BeginForm("BalanceOpening", "DenaturedSpritBalanceOpening", FormMethod.Post, new { id = "Form", enctype = "multipart/form-data", @class = "needs-validation", @novalidate = "" }))
+{
+    @Html.HiddenFor(s => s.Model.DSBalanceOpeningId, new { @id = "ID" })
+    @Html.HiddenFor(s => s.Model.JsonData, new { @id = "txtjsondata" })
+    <div class="row g-3 align-items-center">
+        <fieldset class="border p-2">
+            <legend class="float-none w-auto p-2" data-translate="Denatured Sprit Balance Opening">Denatured Sprit Balance Opening</legend>
+
+            <table id="DIPOpeningEntryTable1" style="width:100%" class="table display table-boardered">
+                <thead>
+                    <tr style="text-align: center;">
+                        <th class="form-label mandarory" style="text-align: center" data-translate="Unit Name">Unit Name</th>
+                        <th class="form-label mandarory" style="text-align: center" data-translate="Item Name">Item Name</th>
+                        <th class="form-label mandarory" style="text-align: center" data-translate="Opening Date">Opening Date</th>
+                        <th class="form-label mandarory" style="text-align: center" data-translate="Opening Qty Balance">Opening Qty Balance</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr id="row1">
+                        <td style="text-align: center">
+                            @Html.DropDownListFor(model => model.Model.UnitId, (List<SelectListItem>)ViewBag.lstMfgUnitList, "", new { @class = "form-control", @id = "ddlUnitId", @onchange = "getItemName()" })
+                        </td>
+
+                        <td style="text-align:center">
+                            @Html.DropDownListFor(model => model.Model.ItemId, (List<SelectListItem>)Model.lstItemNameList, "", new { @class = "form-control ", @id = "ddlItemId" })
+                        </td>
+                        <td style="text-align: center">
+                            @Html.TextBoxFor(s => s.Model.OpeningDate, "{0:yyyy-MM-dd}", new { @class = "form-control", @id = "txtOpeningDate", @type = "date", data_val = "true" })
+                            @Html.ValidationMessageFor(s => s.Model.OpeningDate, "", new { @class = "text-danger" })
+                        </td>
+
+
+                        <td style="text-align: center">
+                            @Html.TextBoxFor(s => s.Model.OpeningQtyBalance, new { @class = "form-control  ", @id = "txtOpeningQtyBalance" })
+                            @Html.ValidationMessageFor(s => s.Model.OpeningQtyBalance, "", new { @class = "text-danger" })
+                        </td>
+                        <td style="text-align: center">
+                            <i class="fa fa-plus-circle" aria-hidden="true" onclick="addRow()"></i>
+                            <i class="fa fa-minus-circle" aria-hidden="true" onclick="removeRow('row1')"></i>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="text-align:center">
+                <button type="submit" id="btnSubmit" onclick="collectData()" style="display:none" class="btn btn-success">Save</button>
+                <button type="button" id="btnSubmitCheck" onclick="collectData()" data-translate="Save" class="btn btn-success">Save</button>
+            </div>
+        </fieldset>
+    </div>
+}
+
+<div class="row g-3 align-items-center">
+    <fieldset class="border p-2">
+        <legend class="float-none w-auto p-2" data-translate="Denatured Sprit Balance Opening">Denatured Sprit Balance Opening</legend>
+        <div class="row">
+            <table id="DipOpeningEntryGrid" style="width:100%!important" class="table display table-boardered dataTable no-footer">
+                <thead>
+                    <tr style="text-align: center;">
+                        <th style="text-align: center;" class="green" data-translate="S.NO.">S.NO.</th>
+                        <th style="text-align: center;" class="green" data-translate="Unit Name">Unit Name</th>
+                        <th style="text-align: center;" class="green" data-translate="Item Name">Item Name</th>
+                        <th style="text-align: center;" class="green" data-translate="Opening Date">Opening Date</th>
+                        <th style="text-align: center;" class="green" data-translate="Opening Qty Balance">Opening Qty Balance</th>
+                        <th style="text-align: center;" class="green" data-translate="Status">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 0;
+                    }
+
+                    @if (ViewBag.BalanceOpeningList != null)
+                    {
+
+                        foreach (var itm in ViewBag.BalanceOpeningList)
+                        {
+                            i = i + 1;
+
+                            <tr>
+                                <td>@i</td>
+                                <td>@itm.UnitName</td>
+                                <td>@itm.ItemName</td>
+                                <td>@itm.OpeningDate</td>
+                                <td>@itm.OpeningQtyBalance</td>
+                                <td>
+                                    <label class="switch">
+                                        <input type="checkbox" name="checked" id="switch@(itm.IsActive)" onchange="activeDeactive(@itm.DSBalanceOpeningId, @(itm.IsActive == 1 ? 0 : 1))" class="tgl tgl-flat checkbox" @(itm.IsActive == 1 ? "checked" : "") />
+                                        <span class="slider round" title="@(itm.IsActive == 1 ? "Active" : "Deactive")"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </fieldset>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js" integrity="sha512-WMEKGZ7L5LWgaPeJtw9MBM4i5w5OSBlSjTjCtSnvFJGSVD26gE5+Td12qN5pvWXhuWaWcVwF++F7aqu9cvqP0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+    var count = 1;
+    var dropdownValuesArray = [];
+
+    function addRow() {
+
+        count = count + 1;
+        var tbody = document.getElementById('DIPOpeningEntryTable1').getElementsByTagName('tbody')[0];
+        var newRow = document.createElement('tr');
+        var rowId = 'row' + (tbody.children.length + 1);
+        newRow.setAttribute('id', rowId);
+        var rowCount = $("#DIPOpeningEntryTable1 tr").length;
+        var newRowId = "row" + rowCount;
+        var oldItemId = 'row' + (count - 1);
+        //checking the validation if any input filed is emtpy
+        var firstVal = $("#" + oldItemId + " td:nth-child(1) select").val();
+        var secondVal = $("#" + oldItemId + " td:nth-child(2) select").val();
+        var thirdVal = $("#" + oldItemId + " td:nth-child(3) input").val();
+        var fourthVal = $("#" + oldItemId + " td:nth-child(4) input").val();
+
+        if (firstVal == null || firstVal == undefined || firstVal == 0) {
+            alert("Please Select Unit Name");
+            count = count - 1;
+            return false;
+        }
+        if (secondVal == null || secondVal == undefined || secondVal == 0) {
+            alert("Please Select Item Name");
+            count = count - 1;
+            return false;
+        }
+        if (thirdVal == null || thirdVal == undefined || thirdVal == 0) {
+            alert("Please Select Opening Date");
+            count = count - 1;
+            return false;
+        }
+        if (fourthVal == null || fourthVal == undefined || fourthVal == 0) {
+            alert("Please Enter Opening Qty Balance");
+            count = count - 1;
+            return false;
+        }
+
+
+    
+
+        newRow.innerHTML = `<tr id="row1">
+                                                                    <td style="text-align: center">
+    @Html.DropDownListFor(model => model.Model.UnitId, (List<SelectListItem>)ViewBag.lstMfgUnitList, "", new { @class = "form-control", @id = "ddlUnitId", @onchange = "getItemName()" })
+                                    </td>
+
+                                                                <td style="text-align:center">
+    @Html.DropDownListFor(model => model.Model.ItemId, (List<SelectListItem>)Model.lstItemNameList, "", new { @class = "form-control ", @id = "ddlItemId" })
+                                                                </td>
+                                                                   <td style="text-align: center">
+    @Html.TextBoxFor(s => s.Model.OpeningDate, "{0:yyyy-MM-dd}", new { @class = "form-control", @id = "txtOpeningDate", @type = "date", data_val = "true" })
+    @Html.ValidationMessageFor(s => s.Model.OpeningDate, "", new { @class = "text-danger" })
+                                    </td>
+
+                                                                <td style="text-align: center">
+    @Html.TextBoxFor(s => s.Model.OpeningQtyBalance, new { @class = "form-control  ", @id = "txtOpeningQtyBalance" })
+    @Html.ValidationMessageFor(s => s.Model.OpeningQtyBalance, "", new { @class = "text-danger" })
+                                                                </td>
+                                                                <td style="text-align: center">
+                                                                    <i class="fa fa-plus-circle" aria-hidden="true" onclick="addRow()"></i>
+                                                                    <i class="fa fa-minus-circle" aria-hidden="true" onclick="removeRow('row1')"></i>
+                                                                </td>
+                                                            </tr> `;
+
+//disabling previous row
+        if (rowCount > 1) {
+            var prevRowId = "row" + (rowCount - 1);
+            $("#" + prevRowId + " input").prop("disabled", true);
+
+            $(prevRowId).find(".fa-minus-circle").attr("onclick", "removeRow(this, '" + newRowId + "')");
+            $('#DIPOpeningEntryTable1 tbody tr td:first-child select').prop("disabled", true);
+            $('#DIPOpeningEntryTable1 tbody tr td:nth-child(2) select').prop("disabled", true);
+
+        }
+//check the diplicate value
+        if (isDuplicate(firstVal, secondVal)) {
+
+            alert("Duplicate values are not allowed.");
+
+            var prev = count - 1;
+            var rowId1 = 'row' + count;
+            var prevrow = 'row' + prev;
+            $("#" + prevrow + " input").prop("disabled", false);
+            $("#" + prevrow + " td:nth-child(1) select").prop("disabled", false);
+            $("#" + prevrow + " td:nth-child(2) select").prop("disabled", false);
+            count = count - 1;
+
+            return false;
+        }
+        else {
+            dropdownValuesArray.push({ desc: firstVal, itemName: secondVal });
+            console.log(dropdownValuesArray)
+            tbody.appendChild(newRow);
+           
+
+        }
+    }
+   
+
+    function isDuplicate(desc, brandName) {
+        for (var i = 0; i < dropdownValuesArray.length; i++) {
+            if (dropdownValuesArray[i].itemName === brandName && dropdownValuesArray[i].desc == desc) {
+                return true;
+            }
+        }
+        return false;
+    }
+    function DisableDropdown() {
+        for (var i = 0; i < dropdownValuesArray.length; i++) { 
+            var dropdownName;
+            $("#row" + count + " td:nth-child(2)").find("option").filter(function () {
+                return $(this).val() == dropdownValuesArray[i].itemName;
+            }).prop('disabled', true);
+            
+        }
+    }
+
+    function removeRow(rowId) {
+        dropdownValuesArray.pop();
+        if (count > 1) {
+            var prev = count - 1;
+            var rowId1 = 'row' + count;
+            var prevrow = 'row' + prev;
+            $("#" + prevrow + " input").prop("disabled", false);
+            $("#" + prevrow + " td:nth-child(1) select").prop("disabled", false);
+            $("#" + prevrow + " td:nth-child(2) select").prop("disabled", false);
+            var rowToRemove = document.getElementById(rowId1);
+            rowToRemove.parentNode.removeChild(rowToRemove);
+            count = count - 1;
+        }
+        else {
+            alert("Cannot Remove The LastRow");
+        }
+
+    }
+
+    function collectData() {
+        var allRows = document.getElementById('DIPOpeningEntryTable1').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+        var dataArray = []; // Array to store row data objects
+
+        for (var i = 0; i < allRows.length; i++) {
+            var row = allRows[i];
+            var ItemId = row.querySelector('#ddlItemId').value;
+            var UnitId = row.querySelector('#ddlUnitId').value;
+            var OpeningDate = row.querySelector('#txtOpeningDate').value;
+            var OpeningQtyBalance = row.querySelector('#txtOpeningQtyBalance').value;
+
+
+
+            var rowData = {
+                ItemId: ItemId,
+                UnitId: UnitId,
+                OpeningDate: OpeningDate,
+                OpeningQtyBalance: OpeningQtyBalance
+            };
+
+            dataArray.push(rowData);
+
+
+        }
+        var jsonData = JSON.stringify(dataArray);
+        $('#txtjsondata').val(jsonData);
+        Swal.fire({
+
+            text: 'Are you sure you want to Save',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                debugger;
+                var temp = Validation();
+                if (temp == true) {
+                    $("#btnSubmit").click();
+
+                }
+                else {
+                    return false;
+                }
+
+            }
+            else {
+                false;
+            }
+        });
+
+
+
+    }
+
+    function Validation() {
+        count = count + 1;
+        var tbody = document.getElementById('DIPOpeningEntryTable1').getElementsByTagName('tbody')[0];
+        var newRow = document.createElement('tr');
+        var rowId = 'row' + (tbody.children.length + 1);
+        newRow.setAttribute('id', rowId);
+        var rowCount = $("#DIPOpeningEntryTable1 tr").length;
+        var newRowId = "row" + rowCount;
+        var oldItemId = 'row' + (count - 1);
+
+        var firstVal = $("#" + oldItemId + " td:nth-child(1) select").val();
+        var secondVal = $("#" + oldItemId + " td:nth-child(2) select").val();
+        var thirdVal = $("#" + oldItemId + " td:nth-child(3) input").val();
+        var fourthVal = $("#" + oldItemId + " td:nth-child(4) input").val();
+
+        if (firstVal == null || firstVal == undefined || firstVal == 0) {
+            alert("Please Select Unit Name");
+            count = count - 1;
+            return false;
+        }
+        if (secondVal == null || secondVal == undefined || secondVal == 0) {
+            alert("Please Select Item Name");
+            count = count - 1;
+            return false;
+        }
+        if (thirdVal == null || thirdVal == undefined || thirdVal == 0) {
+            alert("Please Select Opening Date");
+            count = count - 1;
+            return false;
+        }
+        if (fourthVal == null || fourthVal == undefined || fourthVal == 0) {
+            alert("Please Enter Opening Qty Balance");
+            count = count - 1;
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+
+
+    function getItemName() {
+        var selectedBrandId = $("#row" + count + " td:nth-child(1) select").val();
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetItemList", "DenaturedSpritBalanceOpening")',
+            data: { MfgId: selectedBrandId },
+            success: function (data) {
+                $("#row" + count + " td:nth-child(2) select").empty();
+                var len = data.data.length;
+                var s = '';
+                for (var i = 0; i < len; i++) {
+                    $("#row" + count + " td:nth-child(2) #ddlItemId").append("<option value='" + data.data[i]["Value"] + "'>" + data.data[i]["Text"] + "</option>");
+                }
+                DisableDropdown();
+            },
+            error: function (xhr, status, error) {
+            }
+        });
+    }
+
+
+    function activeDeactive(DSBalanceOpeningId, IsActive) {
+        debugger;
+        Swal.fire({
+            title: IsActive == 1 ? 'Are You Sure You Want to Activate' : 'Are You Sure You Want to Deactivate',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: "../DenaturedSpritBalanceOpening/ActivateDeActivate",
+                    data: { DSBalanceOpeningId: DSBalanceOpeningId, IsActive: IsActive },
+                    success: function (data) {
+
+                        if (data.data.Message == 'Status Changed Successfully') {
+                            Swal.fire({
+                                icon: "success",
+                                text: "Status Updated Successfully",
+                                type: "Success",
+                                showConfirmButton: true
+                            }).then(function () {
+                                window.location.href = "../DenaturedSpritBalanceOpening/BalanceOpening";
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Failed!",
+                                text: "",
+                                allowOutsideClick: false,
+                                type: "Failed"
+                            });
+                        }
+                    },
+
+                });
+            }
+        });
+    }
+
+
+</script>
