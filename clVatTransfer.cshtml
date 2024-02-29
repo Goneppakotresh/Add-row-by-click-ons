@@ -1,0 +1,395 @@
+﻿@model IEMS_WEB.Areas.ProductionMaster.Models.RequestModel.clVatTransfer
+@{
+    ViewData["Title"] = "clVatTransfer";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+<style>
+    table, th, td {
+        border: 1px solid black;
+    }
+</style>
+
+<div class="page-title">
+    <div class="row">
+        <div class="col-12">
+            <h3 data-translate="">RS VAT Transfer</h3>
+            @if (TempData["Alert"] != null)
+            {
+                @Html.Raw(TempData["Alert"])
+            }
+        </div>
+    </div>
+</div>
+
+
+@using (Html.BeginForm("clVatTransfer", "clVatTransfer", FormMethod.Post, new { id = "Form", enctype = "multipart/form-data", @class = "needs-validation", @novalidate = "" }))
+{
+
+    @Html.HiddenFor(s => s.JsonData, new { @id = "txtjsondata" })
+    <div class="col-12">
+        <h4> Issue Details</h4>
+    </div>
+
+    <div class="row">
+        <div class="col-2">
+            <label>Issue Details :</label>
+        </div>
+        <div class="col-4">
+            @Html.TextBoxFor(m => m.IssueNumber, new { @class = "form-control", id = "txtIssueNumber" })
+        </div>
+        <div class="col-2">
+            <label>Issue Date :</label>
+        </div>
+        <div class="col-4">
+            @Html.TextBoxFor(m => m.IssueDate, new { @class = "from-control datepicker", id = "txtIssueDate" })
+        </div>
+    </div>
+
+    <fieldset class="border p-2">
+        <legend class="float-none w-auto p-2">Product Details</legend>
+        <table id="RSVATtransferTable1" style="width:100%" class="table display table-boardered">
+            <thead>
+                <tr>
+                    <th style="text-align: center" colspan="6">Vat From</th>
+                    <th style="text-align: center" colspan="8">Vat To</th>
+
+                </tr>
+                <tr style="text-align: center;">
+                    <th style="text-align: center">VAT No</th>
+                    <th style="text-align: center">Dip Before</th>
+                    <th style="text-align: center">Dip After</th>
+                    <th style="text-align: center">Strength</th>
+                    <th style="text-align: center">Qty Trans B.L.</th>
+                    <th style="text-align: center">Qty Trans L.P.L.</th>
+                    <th style="text-align: center">VAT No</th>
+                    <th style="text-align: center">Dip Before</th>
+                    <th style="text-align: center">Dip After</th>
+                    <th style="text-align: center">Strength</th>
+                    <th style="text-align: center">Qty Trans B.L.</th>
+                    <th style="text-align: center">Qty Trans L.P.L.</th>
+                    <th style="text-align: center">ReadyStock(BL).</th>
+                    <th style="text-align: center">Storage Wastage</th>
+                    <th style="text-align: center" rowspan="2">Add/Remove</th>
+
+
+                </tr>
+            </thead>
+
+            <tbody>
+
+
+                <tr id="row1">
+                    <td style="text-align: center">
+                        @Html.DropDownListFor(m => m.FromVatNo, (List<SelectListItem>)ViewBag.lstvatno, "", new { @class = "form-control", @id = "ddlVatNumber" })
+                    </td>
+
+                    <td style="text-align:center">
+                        @Html.TextBoxFor(m => m.FromVatDipBefore, new { @class = "form-control", @id = "txtDipBefore" })
+                    </td>
+
+                    <td style="text-align:center">
+                        @Html.TextBoxFor(m => m.FromVatDipAfter, new { @class = "form-control", @id = "txtDipAfter" })
+                    </td>
+
+                    <td style="text-align:center">
+                        @Html.TextBoxFor(m => m.From_Strength, new { @class = "form-control", @id = "txtStrnght" })
+                    </td>
+
+                    <td style="text-align:center">
+                        @Html.TextBoxFor(m => m.FormQtyTrans_BL, new { @class = "form-control", @id = "txtQtyBL" })
+                    </td>
+
+                    <td style="text-align:center">
+                        @Html.TextBoxFor(m => m.FormQtyTrans_LPL, new { @class = "form-control", @id = "txtQtyLPL" })
+                    </td>
+
+
+
+
+                    <td style="text-align: center">
+                        @Html.DropDownListFor(m => m.ToVatNO, (List<SelectListItem>)ViewBag.lstvatno, "", new { @class = "form-control", @id = "ddlVatNumberTo" })
+                    </td>
+
+
+                    <td style="text-align:center">
+                        @Html.TextBoxFor(m => m.ToVatDipBefore, new { @class = "form-control", @id = "txtDipBeforeTo" })
+                    </td>
+
+                    <td style="text-align:center">
+                        @Html.TextBoxFor(m => m.ToVatDipAfter, new { @class = "form-control", @id = "txtDipafterTo" })
+                    </td>
+
+                    <td style="text-align:center">
+                        @Html.TextBoxFor(m => m.To_Strength, new { @class = "form-control", @id = "txtStrengthTo" })
+                    </td>
+
+                    <td style="text-align:center">
+                        @Html.TextBoxFor(m => m.To_QtyTrans_BL, new { @class = "form-control", @id = "txtQtyBlTo" })
+                    </td>
+
+                    <td style="text-align:center">
+                        @Html.TextBoxFor(m => m.To_QtyTrans_LPL, new { @class = "form-control", @id = "txtQtylplTo" })
+                    </td>
+                    <td style="text-align:center">
+                        @Html.TextBoxFor(m => m.ReadyStock_BL, new { @class = "form-control", @id = "txtreadyblockTo" })
+                    </td>
+
+                    <td style="text-align:center">
+                        @Html.TextBoxFor(m => m.StorageWastage, new { @class = "form-control", @id = "txtWastageTo" })
+                    </td>
+
+                    <td style="text-align: center">
+                        <i class="fa fa-plus-circle" aria-hidden="true" onclick="addRow()"></i>
+                        <i class="fa fa-minus-circle" aria-hidden="true" onclick="removeRow('row1')"></i>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <div style="text-align:center">
+            @*   <button type="submit" id="btnSubmit" onclick="collectData()" style="display:none" class="btn btn-success">Save</button> *@
+            <button type="submit" id="btnSubmitCheck" onclick="collectData()" class="btn btn-success">Save</button>
+        </div>
+    </fieldset>
+}
+
+
+<script>
+    var count = 0;
+    var dropdownValuesArray = [];
+
+    function addRow() {
+
+        count = count + 1;
+        var tbody = document.getElementById('RSVATtransferTable1').getElementsByTagName('tbody')[0];
+        var newRow = document.createElement('tr');
+        var rowId = 'row' + (tbody.children.length + 1);
+        newRow.setAttribute('id', rowId);
+        var rowCount = $("#RSVATtransferTable1 tr").length;
+        var newRowId = "row" + rowCount;
+        var oldItemId = 'row' + (count - 1);
+        //checking the validation if any input filed is emtpy
+        var firstVal = $("#" + oldItemId + " td:nth-child(1) select").val();
+        var secondVal = $("#" + oldItemId + " td:nth-child(2) select").val();
+        var thirdVal = $("#" + oldItemId + " td:nth-child(3) input").val();
+        var fourthVal = $("#" + oldItemId + " td:nth-child(4) input").val();
+        var fifthval = $("#" + oldItemId + " td:nth-child(5) input").val();
+        var sixthval = $("#" + oldItemId + " td:nth-child(6) input").val();
+        var seventhval = $("#" + oldItemId + " td:nth-child(7) input").val();
+        var eightval = $("#" + oldItemId + " td:nth-child(8) input").val();
+        var ninthval = $("#" + oldItemId + " td:nth-child(9) input").val();
+        var tenthval = $("#" + oldItemId + " td:nth-child(10) input").val();
+        var eleventhval = $("#" + oldItemId + " td:nth-child(11) input").val();
+        var twelthval = $("#" + oldItemId + " td:nth-child(12) input").val();
+        var thirteenthval = $("#" + oldItemId + " td:nth-child(13) input").val();
+        var fortheenthval = $("#" + oldItemId + " td:nth-child(14) input").val();
+        var fifteenthval = $("#" + oldItemId + " td:nth-child(15) input").val();
+
+      
+
+
+
+
+        newRow.innerHTML = `<tr id="row1">
+
+                                                                                                                       <td style="text-align: center">
+    @Html.DropDownListFor(m => m.FromVatNo, (List<SelectListItem>)ViewBag.lstvatno, "", new { @class = "form-control", @id = "ddlVatNumber" })
+                                                    </td>
+
+                                                    <td style="text-align:center">
+    @Html.TextBoxFor(m => m.FromVatDipBefore, new { @class = "form-control", @id = "txtDipBefore" })
+                                                    </td>
+
+                                                    <td style="text-align:center">
+    @Html.TextBoxFor(m => m.FromVatDipAfter, new { @class = "form-control", @id = "txtDipAfter" })
+                                                    </td>
+
+                                                    <td style="text-align:center">
+    @Html.TextBoxFor(m => m.From_Strength, new { @class = "form-control", @id = "txtStrnght" })
+                                                    </td>
+
+                                                    <td style="text-align:center">
+    @Html.TextBoxFor(m => m.FormQtyTrans_BL, new { @class = "form-control", @id = "txtQtyBL" })
+                                                    </td>
+
+                                                    <td style="text-align:center">
+    @Html.TextBoxFor(m => m.FormQtyTrans_LPL, new { @class = "form-control", @id = "txtQtyLPL" })
+                                                    </td>
+
+
+
+
+                                                    <td style="text-align: center">
+    @Html.DropDownListFor(m => m.ToVatNO, (List<SelectListItem>)ViewBag.lstvatno, "", new { @class = "form-control", @id = "ddlVatNumberTo" })
+                                                    </td>
+
+
+                                                    <td style="text-align:center">
+    @Html.TextBoxFor(m => m.ToVatDipBefore, new { @class = "form-control", @id = "txtDipBeforeTo" })
+                                                    </td>
+
+                                                    <td style="text-align:center">
+    @Html.TextBoxFor(m => m.ToVatDipAfter, new { @class = "form-control", @id = "txtDipafterTo" })
+                                                    </td>
+
+                                                    <td style="text-align:center">
+    @Html.TextBoxFor(m => m.To_Strength, new { @class = "form-control", @id = "txtStrengthTo" })
+                                                    </td>
+
+                                                    <td style="text-align:center">
+    @Html.TextBoxFor(m => m.To_QtyTrans_BL, new { @class = "form-control", @id = "txtQtyBlTo" })
+                                                    </td>
+
+                                                    <td style="text-align:center">
+    @Html.TextBoxFor(m => m.To_QtyTrans_LPL, new { @class = "form-control", @id = "txtQtylplTo" })
+                                                    </td>
+                                                                                                        <td style="text-align:center">
+    @Html.TextBoxFor(m => m.To_QtyTrans_LPL, new { @class = "form-control", @id = "txtreadyblockTo" })
+                                                        </td>
+
+                                                    <td style="text-align:center">
+    @Html.TextBoxFor(m => m.StorageWastage, new { @class = "form-control", @id = "txtWastageTo" })
+                                                    </td>
+
+                                                    <td style="text-align: center">
+                                                        <i class="fa fa-plus-circle" aria-hidden="true" onclick="addRow()"></i>
+                                                        <i class="fa fa-minus-circle" aria-hidden="true" onclick="removeRow('row1')"></i>
+                                                    </td>
+                                                                                            </tr> `;
+
+        //disabling previous row
+        if (rowCount > 1) {
+            var prevRowId = "row" + (rowCount - 1);
+            $("#" + prevRowId + " input").prop("disabled", true);
+
+            $(prevRowId).find(".fa-minus-circle").attr("onclick", "removeRow(this, '" + newRowId + "')");
+            $('#RSVATtransferTable1 tbody tr td:first-child select').prop("disabled", true);
+            $('#RSVATtransferTable1 tbody tr td:nth-child(7) select').prop("disabled", true);
+
+        }
+        //check the diplicate value
+        // if (isDuplicate(firstVal, secondVal)) {
+
+        //     alert("Duplicate values are not allowed.");
+
+        //     var prev = count - 1;
+        //     var rowId1 = 'row' + count;
+        //     var prevrow = 'row' + prev;
+        //     $("#" + prevrow + " input").prop("disabled", false);
+        //     $("#" + prevrow + " td:nth-child(1) select").prop("disabled", false);
+        //     $("#" + prevrow + " td:nth-child(2) select").prop("disabled", false);
+        //     count = count - 1;
+
+        //     return false;
+        // }
+        // else {
+        // dropdownValuesArray.push({ desc: firstVal, itemName: secondVal });
+        tbody.appendChild(newRow);
+
+
+
+    }
+    function removeRow(rowId) {
+        dropdownValuesArray.pop();
+        if (count > 1) {
+            var prev = count - 1;
+            var rowId1 = 'row' + count;
+            var prevrow = 'row' + prev;
+            $("#" + prevrow + " input").prop("disabled", false);
+            $("#" + prevrow + " td:nth-child(1) select").prop("disabled", false);
+            $("#" + prevrow + " td:nth-child(7) select").prop("disabled", false);
+            var rowToRemove = document.getElementById(rowId1);
+            rowToRemove.parentNode.removeChild(rowToRemove);
+            count = count - 1;
+        }
+        else {
+            alert("Cannot Remove The LastRow");
+        }
+
+    }
+
+  
+
+
+    function collectData() {
+        debugger;
+        var allRows = document.getElementById('RSVATtransferTable1').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+        var dataArray = []; // Array to store row data objects
+
+        for (var i = 0; i < allRows.length; i++) {
+            debugger;
+            var row = allRows[i];
+            var IssueNumber = $("#txtIssueNumber").val();
+            var IssueDate = $("#txtIssueDate").val();
+            var VatNumber = $(row).find('#ddlVatNumber').val();
+            var DipBefore = $(row).find('#txtDipBefore').val();
+            var DipAfter = $(row).find('#txtDipAfter').val();
+            var Strength = $(row).find('#txtStrnght').val();
+            var QtyTransBL = $(row).find('#txtQtyBL').val();
+            var QtyTransLPL = $(row).find('#txtQtyLPL').val();
+            var VatNumberTo = $(row).find('#ddlVatNumberTo').val();
+            var DipBeforeTo = $(row).find('#txtDipBeforeTo').val();
+            var DipAfterTo = $(row).find('#txtDipafterTo').val();
+            var StrengthTo = $(row).find('#txtStrengthTo').val();
+            var QtyTransBLTo = $(row).find('#txtQtyBlTo').val();
+            var QtyTransLPLTo = $(row).find('#txtQtylplTo').val();
+            var readyblock = $(row).find('#txtreadyblockTo').val();
+            var Wastage = $(row).find('#txtWastageTo').val();
+
+            var rowData = {
+                IssueNumber: IssueNumber,
+                IssueDate: IssueDate,
+                VatNumber: VatNumber,
+                DipBefore: DipBefore,
+                DipAfter: DipAfter,
+                Strength: Strength,
+                QtyTransBL: QtyTransBL,
+                QtyTransLPL: QtyTransLPL,
+                VatNumberTo: VatNumberTo,
+                DipBeforeTo: DipBeforeTo,
+                DipAfterTo: DipAfterTo,
+                StrengthTo: StrengthTo,
+                QtyTransBLTo: QtyTransBLTo,
+                QtyTransLPLTo: QtyTransLPLTo,
+                readyblock: readyblock,
+                Wastage: Wastage
+            };
+
+            dataArray.push(rowData);
+            console.log(dataArray);
+        }
+
+        var jsonData = JSON.stringify(dataArray);
+        $('#txtjsondata').val(jsonData);
+        
+    }
+
+
+
+    function Validation() {
+        count = count + 1;
+        var tbody = document.getElementById('DIPOpeningEntryTable1').getElementsByTagName('tbody')[0];
+        var newRow = document.createElement('tr');
+        var rowId = 'row' + (tbody.children.length + 1);
+        newRow.setAttribute('id', rowId);
+        var rowCount = $("#DIPOpeningEntryTable1 tr").length;
+        var newRowId = "row" + rowCount;
+        var oldItemId = 'row' + (count - 1);
+
+        var firstVal = $("#" + oldItemId + " td:nth-child(1) select").val();
+        var secondVal = $("#" + oldItemId + " td:nth-child(2) select").val();
+        var thirdVal = $("#" + oldItemId + " td:nth-child(3) input").val();
+        var fourthVal = $("#" + oldItemId + " td:nth-child(4) input").val();
+
+       
+        else {
+            return true;
+        }
+
+    }
+
+</script>
