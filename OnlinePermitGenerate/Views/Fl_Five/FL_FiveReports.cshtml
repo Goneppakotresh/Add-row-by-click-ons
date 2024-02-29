@@ -1,0 +1,289 @@
+﻿@model IEMS_WEB.Areas.OnlinePermitGenerate.Models.Request.FL_FiveSaveModel
+
+
+
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+<style>
+    .product-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px; /* Add margin for separation */
+    }
+
+        .product-table th, .product-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .product-table th {
+            background-color: #f2f2f2;
+        }
+
+    .challan-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px; /* Add margin for separation */
+    }
+
+        .challan-table th, .challan-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .challan-table th {
+            background-color: #f2f2f2;
+        }
+
+
+    .inline-label {
+        display: inline-block;
+        margin-right: 10px; /* Adjust as needed */
+    }
+
+
+    .table-container {
+        display: inline-block;
+        margin-right: 20px; /* Adjust as needed */
+    }
+
+    .route-container {
+        display: flex;
+        align-items: baseline; /* Align items at the baseline to keep them on the same line */
+        margin-bottom: 10px; /* Adjust as needed */
+    }
+
+    .route-label {
+        margin-right: 10px; /* Adjust as needed for spacing between label and value */
+        font-weight: bold; /* Make the label bold if desired */
+    }
+
+    .route-value {
+        margin-right: 20px; /* Add some space after the data */
+    }
+
+    .route-container {
+        margin-bottom: 10px; /* Adjust as needed */
+    }
+
+    .route-label,
+    .route-value {
+        display: inline-block;
+        margin-right: 20px; /* Adjust as needed for space between elements */
+    }
+
+    .route-label {
+        font-weight: bold; /* Make the label bold if desired */
+    }
+
+    .part {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    #pdf {
+    }
+</style>
+
+
+<button onclick="DownloadFile('@Model.Message','@Model.Type')">Download File</button>
+<div id="pdf">
+    <div>
+        <div>
+            <table class="product-table" border="1" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>FL5 Serial No</th>
+                        <th>@Model.SanctionDetailsModel.FL5SerialNO</th>
+                        <th colspan="5"></th>
+                        <th>Date of Issue:</th>
+                        <th>@Model.SanctionDetailsModel.DataOfIssue</th>
+                    </tr>
+                    <tr>
+                        <th>1.Consigner Name:</th>
+                        <th colspan="8" style="text-align:left">@Model.SanctionDetailsModel.ConsignerName</th>
+
+                    </tr>
+                    <tr>
+                        <th>Address:</th>
+                        <td colspan="8">@Model.SanctionDetailsModel.ConsignerCity</td>
+
+                    </tr>
+                    <tr>
+                        <th>2.Consigner Name:</th>
+                        <th colspan="8" style="text-align:left">@Model.SanctionDetailsModel.ConsignerName</th>
+
+                    </tr>
+                    <tr>
+                        <th>Address:</th>
+                        <td colspan="8">@Model.SanctionDetailsModel.ConsigneeCity</td>
+
+                    </tr>
+                    <tr>
+                        <th colspan="9" style="text-align:left">3. Product Details:</th>
+
+                    </tr>
+                    <tr>
+                        <th style="text-align:center">S.No</th>
+                        <th style="text-align:center">Product</th>
+                        <th colspan="3" style="text-align:center">Brand</th>
+                        <th style="text-align:center">QTY(BL)</th>
+                        <th style="text-align:center">QTY(LPL)</th>
+                        <th colspan="2" style="text-align:center">Duty Amount</th>
+                    </tr>
+                    @{
+                        int i = 0;
+                    }
+                    @foreach (var item in Model.ProductDetailsList)
+                    {
+                        i = i + 1;
+                        <tr>
+
+                            <td style="text-align:center">@i</td>
+                            <td style="text-align:center">@item.ItemTypeName</td>
+                            <td colspan="3" style="text-align:center">@item.ItemDetailName</td>
+                            <td style="text-align:center">@item.BL_Qty</td>
+                            <td style="text-align:center">@item.LPL_Qty</td>
+                            <td style="text-align:center"></td>
+                            <td style="text-align:center"></td>
+                        </tr>
+
+                    }
+                    <tr>
+                        <th colspan="1">4. Route:</th>
+                        <td colspan="8">@Model.SanctionDetailsModel.RouteName</td>
+
+                    </tr>
+                    <tr>
+                        <th colspan="9" style="text-align:left">5. Challan Adjustment Details:</th>
+
+                    </tr>
+                    <tr>
+                        <th colspan="2" style="text-align:center">Challan Date</th>
+                        <th style="text-align:center">Bank</th>
+                        <th style="text-align:center">Fee Type</th>
+                        <th style="text-align:center">Ch.Amt</th>
+                        <th style="text-align:center">Avl.Amt</th>
+                        <th style="text-align:center">Total Fee</th>
+                        <th style="text-align:center">Adj.Amt</th>
+                        <th style="text-align:center">Avl.Balance</th>
+
+                    </tr>
+
+                    <tr>
+                        <td colspan="2" style="text-align:center">02/11/2023</td>
+                        <td style="text-align:center">SBI</td>
+                        <td style="text-align:center">@Model.SanctionDetailsModel.FeeModel.FeeTypeName</td>
+                        <td style="text-align:center">@Model.SanctionDetailsModel.FeeModel.Amount</td>
+                        <td style="text-align:center">@Model.SanctionDetailsModel.FeeModel.BalanceAmount</td>
+                        <td style="text-align:center">@Model.SanctionDetailsModel.FeeModel.Amount</td>
+                        <td style="text-align:center"></td>
+                        <td style="text-align:center"></td>
+                    </tr>
+
+                    <tr>
+                        <th>6. Valid Upto :</th>
+                        <td colspan="8" style="text-align:left">@Model.SanctionDetailsModel.ValidFl5Date</td>
+
+                    </tr>
+                    <tr>
+                        <th>7. Seal No. :</th>
+                        <td colspan="8" style="text-align:left">@Model.SanctionDetailsModel.SealNo</td>
+                    </tr>
+                    <tr>
+                        <th>8. Name of Escort :</th>
+                        <td colspan="8" style="text-align:left">@Model.SanctionDetailsModel.NameOfEscort</td>
+                    </tr>
+
+                </thead>
+            </table>
+        </div>
+
+        <div style="text-align: right; font-weight: bold; margin-top: 50px;">
+            <span>
+                Authorised Digital Signature by:-
+            </span><br />
+            <span>e</span><br />
+            <span></span><br />
+            <span>Date: </span>
+        </div>
+        <div style="margin-top: -05px;">
+            <span>1. CC to UNITED SPIRITS LTD., UNIT ALWAR</span><br />
+            <span>For their import No dated 08/11/2023</span><br /><br />
+            <span style="font-weight: bold;">
+                CC for Information and Necessary Action
+            </span><br />
+            <span>
+                2. CC to DEO(Consigner) Other<br />
+                3. CC to DEO(Consigner) Alwar/AEO/CI-<br />
+                4. Office Copy
+            </span>
+        </div>
+
+        <div style="text-align: right; font-weight: bold; margin-top: 50px;">
+            <span>
+                Authorised Digital Signature by:-
+            </span><br />
+            <span></span><br />
+            <span></span><br />
+            <span>Date: </span>
+        </div>
+
+    </div>
+
+</div>
+<div style="margin-left:620px;margin-top:70px;">
+    <button onclick="printDiv('pdf','Title')" class="btn btn-success">Print</button>
+
+    @*  <button onclick="saveDiv('pdf','Title')" class="btn btn-primary">Download</button> *@
+    <button onclick="saveDiv('pdf','Title')" class="btn btn-primary">Download</button>
+</div>
+
+
+
+<script type="text/javascript">
+
+    function printDiv(divId, title) {
+        let mywindow = window.open('', 'PRINT', 'height=650,width=900,top=100,left=150');
+        mywindow.document.write('<html><title>' + title + '</title></head><body>');
+        mywindow.document.write(document.getElementById(divId).innerHTML);
+        mywindow.document.write('');
+        mywindow.document.close();
+
+        setTimeout(function () {
+            mywindow.focus();
+            mywindow.print();
+            mywindow.close();
+        }, 1000); // Adjust the delay time as needed
+
+        return true;
+    }
+
+
+
+    function saveDiv(divId, title) {
+        var doc = new jsPDF();
+        var divContent = document.getElementById(divId);
+        html2canvas(divContent).then(function (canvas) {
+            var imgData = canvas.toDataURL('image/png');
+            doc.addImage(imgData, 'PNG', 15, 15, 180, 160);
+            doc.save('Test.pdf');
+        });
+    }
+
+    function DownloadFile(modeldata, type) {
+        window.location.href = "../Fl_Five/DownlloadFileFl5?data=" + modeldata + "&Type=" + type;
+    }
+
+</script>
+
+
+
+
+

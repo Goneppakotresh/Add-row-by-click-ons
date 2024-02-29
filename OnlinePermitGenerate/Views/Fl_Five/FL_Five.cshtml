@@ -1,0 +1,871 @@
+﻿@model IEMS_WEB.Areas.OnlinePermitGenerate.Models.Request.FL_FiveSaveModel
+@{
+    ViewBag.Title = "Fl-5";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/assets/js/translator/fl_five.js"></script>
+<div class="page-title">
+    <div class="row">
+        <div class="col-12">
+            <h3 data-translate="Request FL-5 Permit">
+                Request FL-5 Permit
+
+            </h3>
+        </div>
+    </div>
+    @if (TempData["Alert"] != null)
+    {
+        @Html.Raw(TempData["Alert"])
+    }
+</div>
+
+@using (Html.BeginForm("FL_Five", "FL_Five", FormMethod.Post, new { enctype = "multipart/form-data", @class = "needs-validation", @novalidate = "", @id = "FlFive" }))
+{
+    <fieldset class="border p-2">
+        <legend class="float-none w-auto p-2" data-translate="Details">Details</legend>
+        <div class="row g-3 align-items-center">
+            <div class="col-md-3">
+                <label class="form-label" data-translate="DEO" for="DEOLIST">DEO</label>
+                @Html.DropDownListFor(m => m.DEO_ID, ViewBag.DEOLIST as List<SelectListItem>, new { @class = "form-select", @id = "DEOLIST" ,@readonly="readonly"})
+                <span class="error-message" id="errorDEO"></span>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="SanctionNo" data-translate="Sanction No">Sanction No</label>
+                @Html.TextBoxFor(m => m.SanctionNo, new { @class = "form-control",  @id = "SanctionNo" })
+                @Html.HiddenFor(s=>s.SanctionDetailsModel.SanctionNo)
+                <span class="error-message" id="errorSanctionNo"></span>
+            </div>
+            <div class="col-md-3">
+                <br />
+                <button class="btn btn-success" type="button" data-translate="Load" id="GetSantiondata"><i class="fa fa-file"></i> Load</button>
+            </div>
+            <div class="col-md-3">
+                @*style="display:none" is added as per client request. Raghavendra, 04.10.2023.*@
+                <label class="form-label" data-translate="Balance Sanction Qty" for="SanctionBalance">Balance Sanction Qty</label>
+                @Html.TextBoxFor(m => m.SanctionDetailsModel.SanctionBalance, new { @class = "form-control",  @id = "SanctionBalance"  ,@readonly="readonly"})
+
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="border p-2">
+        <legend class="float-none w-auto p-2" data-translate="Consigner / Consignee Details"> Consigner / Consignee Details</legend>
+        <div class="row g-3 align-items-center">
+
+            <div class="col-md-3">
+                <label class="form-label" data-translate="Consigner Category" for="ConsignerCategory">Consigner Category</label>
+                @Html.HiddenFor(s=>s.SanctionDetailsModel.ConsignerCategory)
+                @Html.TextBoxFor(m => m.SanctionDetailsModel.ConsignerCategoryName, new { @class = "form-control",  @id = "ConsignerCategoryName" ,@readonly="readonly" })
+
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" data-translate="Consigner Name" for="ConsignerCategory">Consigner Name</label>
+                @*  @Html.DropDownListFor(m => m.SanctionDetailsModel.ConsignerId, ViewBag.LicenseList as List<SelectListItem>, new { @class = "form-select", @id = "ConsignerName" ,@readonly="readonly" }) *@
+                @Html.HiddenFor(s=>s.SanctionDetailsModel.ConsignerId)
+                @Html.TextBoxFor(d=>d.SanctionDetailsModel.ConsignerName, new { @class = "form-control",  @id = "ConsignerName"  ,@readonly="readonly"})
+
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" data-translate="Consigner City" for="ConsignerCity">Consigner City</label>
+                @Html.TextBoxFor(m => m.SanctionDetailsModel.ConsignerCity, new { @class = "form-control",  @id = "ConsignerCity" ,@readonly="readonly" })
+
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" data-translate="Consignee Category" for="ConsigneeCategory">Consignee Category</label>
+                @Html.HiddenFor(s=>s.SanctionDetailsModel.ConsigneeCategory)
+                @Html.TextBoxFor(m => m.SanctionDetailsModel.ConsigneeCategoryName, new { @class = "form-control",  @id = "ConsigneeCategoryName" ,@readonly="readonly" })
+
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" data-translate="Consignee Name" for="ConsigneeCategory">Consignee Name</label>
+                @Html.HiddenFor(s=>s.SanctionDetailsModel.ConsigneeId)
+                @Html.TextBoxFor(d=>d.SanctionDetailsModel.ConsigneeName, new { @class = "form-control",  @id = "ConsigneeName"  ,@readonly="readonly"})
+
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" data-translate="Consignee City" for="ConsigneeCity">Consignee City</label>
+                @Html.TextBoxFor(m => m.SanctionDetailsModel.ConsigneeCity, new { @class = "form-control",  @id = "ConsigneeCity"  ,@readonly="readonly"})
+                <span class="error-message" id="errorConsigneeCity"></span>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset class="border p-2">
+        <legend class="float-none w-auto p-2" data-translate="Permit Details">Permit Details</legend>
+        <div class="row g-3 align-items-center">
+            <div class="col-md-3">
+                <label class="form-label" data-translate="Validity(In Days)" for="ConsigneeCategory">Validity(In Days)</label>
+                @Html.TextBoxFor(m => m.ValidityDay, new { @class = "form-control",  @id = "ValidityDay" })
+                @Html.ValidationMessageFor(model => model.ValidityDay, "", new { @class = "text-danger" })
+                <span class="error-message" id="errorValidityDay"></span>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" data-translate="Validity Date" for="ConsigneeCategory">Validity Date</label>
+                @Html.TextBoxFor(m => m.ValidityDate, new { @class = "form-control",  @id = "ValidityDate",@readonly="readonly" })
+                
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" data-translate="Seal No" for="SealNo">Seal No</label>
+                @Html.TextBoxFor(m => m.SealNo, new { @class = "form-control",  @id = "SealNo" })
+                @Html.ValidationMessageFor(model => model.SealNo, "", new { @class = "text-danger" })
+
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" data-translate="Transport Mode" for="TransportMode">Transport Mode</label>
+                @Html.DropDownListFor(s => s.TransportMode,(List<SelectListItem>)ViewBag.TransportLIST, new { @class = "form-control js-example-basic-single TransportMode",id = "TransportMode",@required = "required"})
+                @Html.ValidationMessageFor(model => model.TransportMode, "", new { @class = "text-danger" })
+
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" data-translate="FL-4 No" for="Fl4Number">FL-4 No</label>
+                @Html.TextBoxFor(m => m.Fl4Number, new { @class = "form-control",  @id = "Fl4Number" })
+                @Html.ValidationMessageFor(model => model.Fl4Number, "", new { @class = "text-danger" })
+
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" data-translate="FL-4 Date" for="Fl4Number">FL-4 Date</label>
+                @Html.TextBoxFor(m => m.FL4Date, new { @class = "form-control",  @id = "FL4Date" })
+                @Html.ValidationMessageFor(model => model.FL4Date, "", new { @class = "text-danger" })
+
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" data-translate="Name Of Escort" for="NameOfEscort">Name Of Escort</label>
+                @Html.TextBoxFor(m => m.NameOfEscort, new { @class = "form-control",  @id = "NameOfEscort",@required = "required" })
+                @Html.ValidationMessageFor(model => model.NameOfEscort, "", new { @class = "text-danger" })
+                <span class="error-message" id="errorNameOfEscort"></span>
+
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" data-translate="Type" for="Type">Type</label>
+                @Html.TextBoxFor(m => m.Type, new { @class = "form-control",  @id = "Type",@readonly="readonly" ,@required = "required"})
+
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" data-translate="Remarks" for="Remarks">Remarks</label>
+                @Html.TextBoxFor(m => m.Remarks, new { @class = "form-control",  @id = "Remarks",@required = "required" })
+                @Html.ValidationMessageFor(model => model.Remarks, "", new { @class = "text-danger" })
+
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" data-translate="Route" for="ConsigneeCategory">Route</label>
+                @Html.DropDownListFor(m => m.RouteID, ViewBag.RouteList as List<SelectListItem>, new { @class = "form-select", @id = "RouteID" ,@readonly="readonly" })
+                <span class="error-message" id="errorRoute"></span>
+            </div>
+
+
+            <fieldset class="border p-2" id="tablegrdStockDetails">
+                <legend class="float-none w-auto p-2" data-translate="Product Details">Product Details</legend>
+                <div class="col-md-12 grd-table">
+
+
+                    <table id="grdStockDetails" class="table display table-boardered dataTable no-footer">
+                        <thead>
+                            <tr>
+                                <th data-translate="Product Group">Product Group</th>
+                                <th data-translate="Item Detail Name">Item Detail Name</th>
+                                <th data-translate="Item Type Name">Item Type Name</th>
+                                <th data-translate="Qty(BL)">Qty(BL)</th>
+                                <th data-translate="Qty(LPL)">Qty(LPL)</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody2">
+                            @if (Model.ProductDetailsList != null)
+                            {
+                                for (int i = 0; i < Model.ProductDetailsList.Count; i++)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.HiddenFor(s=>s.ProductDetailsList[i].GroupID)
+                                            @Html.TextBoxFor(s => s.ProductDetailsList[i].GroupName, new { @class = "form-control",id = "GroupName",@required = "required",@readonly="readonly"})
+                                        </td>
+                                        <td>
+                                            @Html.HiddenFor(s=>s.ProductDetailsList[i].ItemDetailId)
+                                            @Html.TextBoxFor(s => s.ProductDetailsList[i].ItemDetailName, new { @class = "form-control",id = "ItemDetailName",@required = "required",@readonly="readonly"})
+                                        </td>
+                                        <td>
+                                            @Html.HiddenFor(s=>s.ProductDetailsList[i].ItemTypeId)
+                                            @Html.TextBoxFor(s => s.ProductDetailsList[i].ItemDetailName, new { @class = "form-control",id = "ItemDetailName",@required = "required",@readonly="readonly"})
+                                        </td>
+
+                                        <td>
+                                            @Html.TextBoxFor(model => model.ProductDetailsList[i].BL_Qty,  new { @class = "form-control alphanumeric", id = "BL_Qty"+@i,@onblur="GetLPL("+@i+")" })
+                                            @Html.ValidationMessageFor(model => model.ProductDetailsList[i].BL_Qty, "", new { @class = "text-danger",id="BL_Qty"+@i })
+                                        </td>
+                                        <td>
+                                            @Html.TextBoxFor(model => model.ProductDetailsList[i].LPL_Qty,  new { @class = "form-control alphanumeric", id = "LPL_Qty"+@i,@readonly="readonly" })
+                                            @Html.HiddenFor(s=>s.SanctionDetailsModel.Strength,new{@id="Strength"})
+                                        </td>
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+
+
+
+            </fieldset>
+            <fieldset class="border p-2">
+                <legend class="float-none w-auto p-2" data-translate="Fees Details">Fees Details</legend>
+                <br />
+                <div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label" data-translate="Unit name" for="UnitName">Unit name</label>
+                                @Html.TextBoxFor(m => m.SanctionDetailsModel.FeeModel.UnitName, new { @class = "form-control",  @id = "UnitName",@readonly="readonly"})
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label" data-translate="Fee Type name" for="FeeTypeName">Fee Type name</label>
+                                @Html.TextBoxFor(m => m.SanctionDetailsModel.FeeModel.FeeTypeName, new { @class = "form-control",  @id = "FeeTypeName",@readonly="readonly"})
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label" data-translate="Buddget Head" for="BuddgetHead">Buddget Head</label>
+                                @Html.TextBoxFor(m => m.SanctionDetailsModel.FeeModel.BuddgetHead, new { @class = "form-control",  @id = "BuddgetHead",@readonly="readonly"})
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label" data-translate="Group name" for="GroupName">Group name</label>
+                                @Html.TextBoxFor(m => m.SanctionDetailsModel.FeeModel.GroupName, new { @class = "form-control",  @id = "GroupName",@readonly="readonly"})
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label" data-translate="Amount" for="Amount">Amount</label>
+                                @Html.TextBoxFor(m => m.SanctionDetailsModel.FeeModel.Amount, new { @class = "form-control",  @id = "Amount",@readonly="readonly"})
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label" data-translate="Amount Balance" for="BalanceAmount">Amount Balance</label>
+                                @Html.TextBoxFor(m => m.SanctionDetailsModel.FeeModel.BalanceAmount, new { @class = "form-control",  @id = "BalanceAmount",@readonly="readonly"})
+                            </div>
+                        </div>
+
+                        <div class="text-center" id="Button" style="display:none">
+                            <button class="btn btn-success" type="button" id="btnAdd" data-translate="Add"><i class="fa fa-file"></i> Add</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </fieldset>
+        </div>
+        <div class="text-center" id="SaveButton">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @if (Model.SanctionDetailsModel.BtnDisbled == 1)
+            {
+                <button class="btn btn-success" type="submit" id="btnSubmit" data-translate="SUBMIT"><i class="fa fa-file"></i> SUBMIT</button>
+
+            }
+            else
+            {
+                <button class="btn btn-success" type="button" disabled="disabled" data-translate="SUBMIT"><i class="fa fa-file"></i> SUBMIT</button>
+
+            }
+            <button type="button" id="BackBtn" class="btn btn-primary" data-translate="BACK">BACK</button>
+        </div>
+    </fieldset>
+
+
+}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js" integrity="sha512-WMEKGZ7L5LWgaPeJtw9MBM4i5w5OSBlSjTjCtSnvFJGSVD26gE5+Td12qN5pvWXhuWaWcVwF++F7aqu9cvqP0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+    $("#BackBtn").click(function () {
+        window.location.href = "../Fl_Five/Fl_FiveList";
+    });
+
+    function GetLPL(index) {
+        var BL = parseInt($("#BL_Qty" + index).val());
+        var strength = parseFloat($("#Strength").val());
+        if (BL > 0 && strength > 0) {
+            ((100 - 10.23) / 100) * 10
+            var convertBL_to_LPL = ((100 - strength) / 100) * BL;
+            $("#LPL_Qty" + index).val(convertBL_to_LPL);
+        }
+        else {
+            $("#LPL_Qty" + index).val(0);
+        }
+
+    }
+
+    $('#btnSubmit').click(function (e) {
+        alert(hello);
+        var toTalbalance = parseInt($("#SanctionBalance").val());
+        var Qty = parseInt($("#BL_Qty0").val());
+        var ValidityDay = $("#ValidityDay").val();
+        var ValidityDate = $("#ValidityDate").val();
+        var SealNo = $("#SealNo").val();
+        var TransportMode = $("#TransportMode").val();
+        var Fl4Number = $("#Fl4Number").val();
+        var FL4Date = $("#FL4Date").val();
+        var NameOfEscort = $("#NameOfEscort").val();
+        var Remarks = $("#Remarks").val();
+        if (ValidityDay == 0 || ValidityDay == null || ValidityDay == undefined) {
+            $("#errorValidityDay").text("Please insert validity day").css("color", "red");
+            return false;
+        } else {
+            $("#errorValidityDay").html("");
+        }
+
+        if (ValidityDate == 0 || ValidityDate == null || ValidityDate == undefined) {
+            $("#errorValidityDate").text("Please insert ValidityDate").css("color", "red");
+            return false;
+        } else {
+            $("#errorValidityDate").html("");
+        }
+
+        if (SealNo == "" || SealNo == 0 || SealNo == null || SealNo == undefined) {
+            $("#errorSealNo").text("Please insert SealNo").css("color", "red");
+            return false;
+        } else {
+            $("#errorSealNo").html("");
+        }
+
+        if (TransportMode == 0 || TransportMode == null || TransportMode == undefined) {
+            $("#errorTransportMode").text("Please insert TransportMode").css("color", "red");
+            return false;
+        } else {
+            $("#errorTransportMode").html("");
+        }
+
+
+
+        if (Fl4Number == 0 || Fl4Number == null || Fl4Number == undefined) {
+            $("#errorFl4Number").text("Please insert Fl4Number").css("color", "red");
+            return false;
+        } else {
+            $("#errorFl4Number").html("");
+        }
+        if (FL4Date == 0 || FL4Date == null || FL4Date == undefined) {
+            $("#errorFL4Date").text("Please insert FL4Date").css("color", "red");
+            return false;
+        } else {
+            $("#errorFL4Date").html("");
+        }
+        if (NameOfEscort == 0 || NameOfEscort == null || NameOfEscort == undefined) {
+            $("#errorNameOfEscort").text("Please insert NameOfEscort").css("color", "red");
+            return false;
+        } else {
+            $("#errorNameOfEscort").html("");
+        }
+        if (Remarks == "" || Remarks == 0 || Remarks == null || Remarks == undefined) {
+            $("#errorRemarks").text("Please insert Remarks").css("color", "red");
+            return false;
+        } else {
+            $("#errorRemarks").html("");
+        }
+        if (toTalbalance >= Qty) {
+            $('#FlFive').submit();
+        }
+        else {
+            alert("Quantity should  not greater than Balance Sanction Qty");
+        }
+        return false;
+    });
+    function CallAjaxDynamic(PropertyID, ID, Type) {
+        $.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            url: "../Fl_Five/SelectDropDown",
+            data: { "ParentID": ID, "DropDownType": Type },
+            dataType: "json",
+            success: function (data) {
+                debugger;
+                $('#' + PropertyID).html("");
+                var s = '';
+                var len = data.length;
+                for (var i = 1; i < len; i++)//fore multiple dropdowns
+                {
+                    s += "<option value='" + data[i]["Value"] + "'>" + data[i]["Text"] + "</option>";
+                }
+                $('#' + PropertyID).html(s).trigger("chosen:updated");;
+            },
+            error: function (result) {
+                // $('#errorBlock').show();
+                // $('#lblMessage').text("Error...Please Try again");
+                swal("Error!..Please Try again")
+            }
+        });
+    }
+    function FillDropDownDynamic(event, Type) {
+        var FillPropertyID = $(event).attr("nextdata");
+        var PropertyID = $(event).attr("id");
+        var ID = $("#" + PropertyID).val();
+
+        var SelectOtherPropertyID = $(event).attr("preDatabind");
+        if (SelectOtherPropertyID != null && SelectOtherPropertyID != "undefined") {
+            ID = $("#" + SelectOtherPropertyID).val();
+            CallAjaxDynamic(FillPropertyID, ID, Type);
+        }
+        else {
+            CallAjaxDynamic(FillPropertyID, ID, Type);
+        }
+
+    }
+
+    $("#GroupID").change(function () {
+        var ID = $("#GroupID").val();
+        $.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            url: "../Fl_Five/SelectDropDown",
+            data: { "ParentID": ID, "DropDownType": "BRANDFLAVERFL5" },
+            dataType: "json",
+            success: function (data) {
+                debugger;
+                $('#CategoryID').html("");
+                var s = '';
+                var len = data.length;
+                for (var i = 1; i < len; i++)//fore multiple dropdowns
+                {
+                    s += "<option value='" + data[i]["Value"] + "'>" + data[i]["Text"] + "</option>";
+                }
+                $('#CategoryID').html(s).trigger("chosen:updated");;
+            },
+            error: function (result) {
+                // $('#errorBlock').show();
+                // $('#lblMessage').text("Error...Please Try again");
+                swal("Error!..Please Try again")
+            }
+        });
+    });
+
+    $("#CategoryID").change(function () {
+        var ID = $("#CategoryID").val();
+        $.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            url: "../Fl_Five/SelectDropDown",
+            data: { "ParentID": ID, "DropDownType": "BRAND_NAMESFL5" },
+            dataType: "json",
+            success: function (data) {
+                debugger;
+                $('#BrandID').html("");
+                var s = '';
+                var len = data.length;
+                for (var i = 1; i < len; i++)//fore multiple dropdowns
+                {
+                    s += "<option value='" + data[i]["Value"] + "'>" + data[i]["Text"] + "</option>";
+                }
+                $('#BrandID').html(s).trigger("chosen:updated");;
+            },
+            error: function (result) {
+                // $('#errorBlock').show();
+                // $('#lblMessage').text("Error...Please Try again");
+                swal("Error!..Please Try again")
+            }
+        });
+    });
+
+    $("#BrandID").change(function () {
+        var ID = $("#GroupID").val();
+        $.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            url: "../Fl_Five/SelectDropDown",
+            data: { "ParentID": ID, "DropDownType": "BRAND_PACKING_TYPEFL5" },
+            dataType: "json",
+            success: function (data) {
+                debugger;
+                $('#PackingID').html("");
+                var s = '';
+                var len = data.length;
+                for (var i = 1; i < len; i++)//fore multiple dropdowns
+                {
+                    s += "<option value='" + data[i]["Value"] + "'>" + data[i]["Text"] + "</option>";
+                }
+                $('#PackingID').html(s).trigger("chosen:updated");;
+            },
+            error: function (result) {
+                // $('#errorBlock').show();
+                // $('#lblMessage').text("Error...Please Try again");
+                swal("Error!..Please Try again")
+            }
+        });
+    });
+</script>
+
+<script>
+
+    ; (function ($, window, document, undefined) {
+        $("#ValidityDay").on("change", function () {
+            var date = new Date(),
+                days = parseInt($("#ValidityDay").val(), 10);
+
+            if (!isNaN(date.getTime()) && days > 0) {
+                date.setDate(date.getDate() + days);
+
+                $("#ValidityDate").val(date.toInputFormat("yyyy-MMM-dd"));
+            } else {
+                alert("Same date Invalid");
+                $("#ValidityDate").val('');
+            }
+        });
+
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ];
+        //From: http://stackoverflow.com/questions/3066586/get-string-in-yyyymmdd-format-from-js-date-object
+        Date.prototype.toInputFormat = function () {
+            var yyyy = this.getFullYear().toString();
+            var mm = (this.getMonth() + 1).toString(); // getMonth() is zero-based
+            var dd = this.getDate().toString();
+            // return yyyy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]); // padding
+            return (dd[1] ? dd : "0" + dd[0]) + "-" + monthNames[(mm[1] ? mm : "0" + mm[0]) - 1] + "-" + yyyy;
+        };
+    })(jQuery, this, document);
+
+
+
+</script>
+
+
+<script>
+
+
+
+    $("#GetSantiondata").click(function () {
+        var data = $("#SanctionNo").val();
+        var DEOID = $("#DEOLIST").val();
+        var Type = $("#Type").val();
+        if (DEOID == 0 || DEOID == null || DEOID == undefined) {
+            $("#errorDEO").text("Select DEO").css("color", "red");
+            return false;
+        }
+        else {
+            $("#errorDEO").html("");
+        }
+        if (data == 0 || data == null || data == undefined) {
+            $("#errorSanctionNo").text("Insert section No").css("color", "red");
+            return false;
+        } else {
+            $("#errorSanctionNo").html("");
+        }
+
+        if (data != null && data != "") {
+            window.location.href = "../Fl_Five/Fl_Five?SanctionNo=" + data + "&DEOID=" + DEOID + "&Type=" + Type;
+        }
+    })
+
+    $("#FL4Date").datepicker({
+        dateFormat: "dd-M-yy",
+        maxDate: 0,
+        changeMonth: true,
+        changeYear: true,
+        defaultDate: new Date(),
+        onSelect: function (evnt) {
+            $(this).tooltip("dispose");
+        }
+    });
+    $("#FL4Date").datepicker("setDate", new Date());
+
+
+
+    var rowIdx2 = 0;
+    $('#Add2').on('click', function () {
+        debugger;
+        // Adding a row inside the tbody.
+        $('#tbody2').append(`<tr id="R${++rowIdx2}">
+                                                                                                     <td class ="row-index "><select class ="form-control js-example-basic-single GroupLIST" id="ProductGroupId${rowIdx2}" name="ProductDetailsList[${rowIdx2}].GroupID" onChange="FillDropDownDynamic(this,'BRANDFLAVERFL5')" nextdata="CategoryID${rowIdx2}" required="required"></td>
+                                                                                                                       <td class ="row-index "><select class ="form-control js-example-basic-single CategoryLIST" id="CategoryID${rowIdx2}" name="ProductDetailsList[${rowIdx2}].CategoryID" onChange="FillDropDownDynamic(this,'BRAND_NAMESFL5')" nextdata="BrandID${rowIdx2}" required="required"></td>
+                                                                                                                             <td class ="row-index "><select class ="form-control js-example-basic-single BrandLIST" id="BrandID${rowIdx2}" name="ProductDetailsList[${rowIdx2}].BrandID" onChange="FillDropDownDynamic(this,'BRAND_PACKING_TYPEFL5')" nextdata="PackingID${rowIdx2}" preDatabind="ProductGroupId${rowIdx2}" required="required"></td>
+                                                                                                       <td class ="row-index "><select class ="form-control js-example-basic-single PackingLIST" id="PackingID${rowIdx2}" name="ProductDetailsList[${rowIdx2}].PackingID" required="required"></td>
+                                                                                          <td class ="row-index"> <input class ="form-control"  id="BL_Qty${rowIdx2}" name="ProductDetailsList[${rowIdx2}].BL_Qty" required="" type="text" ></td>
+                                                                                               <td class ="row-index"> <input class ="form-control"  id="LPL_Qty${rowIdx2}" name="ProductDetailsList[${rowIdx2}].LPL_Qty" required="" type="text" ></td>
+                                                                          <td class="text-center">
+                                                                            <i class="fa fa-minus remove"
+                                                                              </i>
+                                                                            </td>
+                                                                          </tr>`);
+        $('.GroupLIST').append($('.GroupLIST').html());
+        $('.CategoryLIST').append($('.CategoryLIST').html());
+        $('.BrandLIST').append($('.BrandLIST').html());
+        $('.PackingLIST').append($('.PackingLIST').html());
+        // $(".js-example-basic-single").select2();
+        // $(".js-example-disabled-results").select2();
+        $(".js-example-basic-single").chosen();
+        $(".js-example-disabled-results").chosen();
+    });
+
+    $('#tbody2').on('click', '.remove', function () {
+
+        var child = $(this).closest('tr').nextAll();
+        child.each(function () {
+
+            var id = $(this).attr('id');
+
+            var dig = parseInt(id.substring(1));
+
+            $(this).attr('id', `R${dig - 1}`);
+
+            $(this).children('.row-index').each(function (index, data) {
+
+                var idi = $(this).children('Input');
+                var idis = $(this).children('Select');
+                if (index == 0) {
+                    idis.attr('name', 'ProductDetailsList[' + (dig - 1) + '].GroupID');
+                    idis.attr('id', `ProductGroupId${dig - 1}`);
+                }
+                else if (index == 1) {
+                    idis.attr('name', 'ProductDetailsList[' + (dig - 1) + '].CategoryID');
+                    idis.attr('id', `Capacity${dig - 1}`);
+                }
+                else if (index == 2) {
+                    idis.attr('name', 'ProductDetailsList[' + (dig - 1) + '].BrandID');
+                    idis.attr('id', `Capacity${dig - 1}`);
+                } else if (index == 3) {
+                    idis.attr('name', 'ProductDetailsList[' + (dig - 1) + '].PackingID');
+                    idis.attr('id', `Capacity${dig - 1}`);
+                } else if (index == 4) {
+                    idi.attr('name', 'ProductDetailsList[' + (dig - 1) + '].BL_Qty');
+                    idi.attr('id', `Capacity${dig - 1}`);
+                } else if (index == 5) {
+                    idi.attr('name', 'ProductDetailsList[' + (dig - 1) + '].LPL_Qty');
+                    idi.attr('id', `Capacity${dig - 1}`);
+                }
+            });
+        });
+        $(this).closest('tr').remove();
+        // Decreasing the total number of rows by 1.
+        rowIdx--;
+    });
+</script>
+
+<style>
+    table.dataTable input, table.dataTable select {
+        height: auto !important;
+    }
+
+    table td {
+        border: 1px solid #d4d4d4 !important;
+    }
+
+    input.Actionstyle {
+        background-color: transparent !important;
+        border: 0px !important;
+        width: 100% !important;
+        text-align: left;
+    }
+
+    .caret {
+        display: inline-block;
+        width: 0;
+        height: 0;
+        margin-left: 2px;
+        vertical-align: middle;
+        border-top: 4px dashed;
+        border-top: 4px solid\9;
+        border-right: 4px solid transparent;
+        border-left: 4px solid transparent
+    }
+
+    .dropdown,
+    .dropup {
+        position: relative
+    }
+
+    .dropdown-toggle:focus {
+        outline: 0
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1000;
+        display: none;
+        float: left;
+        min-width: 160px;
+        padding: 5px 0;
+        margin: 2px 0 0;
+        font-size: 14px;
+        text-align: left;
+        list-style: none;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ccc;
+        border: 1px solid rgba(0, 0, 0, .15);
+        border-radius: 4px;
+        -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, .175)
+    }
+
+        .dropdown-menu.pull-right {
+            right: 0;
+            left: auto
+        }
+
+        .dropdown-menu .divider {
+            height: 1px;
+            margin: 9px 0;
+            overflow: hidden;
+            background-color: #e5e5e5
+        }
+
+        .dropdown-menu > li > a {
+            display: block;
+            padding: 3px 20px;
+            clear: both;
+            font-weight: 400;
+            line-height: 1.42857143;
+            color: #333;
+            white-space: nowrap
+        }
+
+            .dropdown-menu > li > a:focus,
+            .dropdown-menu > li > a:hover {
+                color: #262626;
+                text-decoration: none;
+                background-color: #f5f5f5
+            }
+
+        .dropdown-menu > .active > a,
+        .dropdown-menu > .active > a:focus,
+        .dropdown-menu > .active > a:hover {
+            color: #fff;
+            text-decoration: none;
+            background-color: #337ab7;
+            outline: 0
+        }
+
+        .dropdown-menu > .disabled > a,
+        .dropdown-menu > .disabled > a:focus,
+        .dropdown-menu > .disabled > a:hover {
+            color: #777
+        }
+
+            .dropdown-menu > .disabled > a:focus,
+            .dropdown-menu > .disabled > a:hover {
+                text-decoration: none;
+                cursor: not-allowed;
+                background-color: transparent;
+                background-image: none;
+                filter: progid:DXImageTransform.Microsoft.gradient(enabled=false)
+            }
+
+    .open > .dropdown-menu {
+        display: block
+    }
+
+    .open > a {
+        outline: 0
+    }
+
+    .dropdown-menu-right {
+        right: 0;
+        left: auto
+    }
+
+    .dropdown-menu-left {
+        right: auto;
+        left: 0
+    }
+
+    .dropdown-header {
+        display: block;
+        padding: 3px 20px;
+        font-size: 12px;
+        line-height: 1.42857143;
+        color: #777;
+        white-space: nowrap
+    }
+
+    .dropdown-backdrop {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 990
+    }
+
+    .pull-right > .dropdown-menu {
+        right: 0;
+        left: auto
+    }
+
+    .dropup .caret,
+    .navbar-fixed-bottom .dropdown .caret {
+        content: "";
+        border-top: 0;
+        border-bottom: 4px dashed;
+        border-bottom: 4px solid\9
+    }
+
+    .dropup .dropdown-menu,
+    .navbar-fixed-bottom .dropdown .dropdown-menu {
+        top: auto;
+        bottom: 100%;
+        margin-bottom: 2px
+    }
+    /*     #tablegrdStockDetails{
+                                                    overflow-x:auto!important;
+                                                    overflow-y:hidden!important;
+                                                } */
+
+    .grd-table .table-responsive {
+        overflow-x: visible !important;
+    }
+
+
+
+    table#grdStockDetails tr td:nth-child(1) .chosen-container {
+        text-align: left !important;
+        width: 150px !important
+    }
+
+    table#grdStockDetails tr td:nth-child(2) .chosen-container {
+        text-align: left !important;
+        width: 150px !important
+    }
+
+    table#grdStockDetails tr td:nth-child(3) .chosen-container {
+        text-align: left !important;
+        width: 150px !important
+    }
+
+    table#grdStockDetails tr td:nth-child(4) .chosen-container {
+        text-align: left !important;
+        width: 150px !important
+    }
+
+    table#grdStockDetails tr td:nth-child(5) input {
+        text-align: right !important;
+    }
+
+    table#grdStockDetails tr td:nth-child(6) input {
+        text-align: right !important;
+    }
+
+    .chosen-container-single .chosen-single span {
+        display: block;
+        overflow: hidden;
+        margin-right: 26px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: left !important;
+    }
+
+</style>
+
+<script>
+
+</script>

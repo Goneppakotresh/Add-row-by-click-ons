@@ -1,0 +1,212 @@
+﻿@model IEMS_WEB.Areas.OnlinePermitGenerate.Models.Response.Fl_SixListResponse
+@{
+    ViewData["Title"] = "GateEntry";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/assets/js/translator/fl_sixlist.js"></script>
+
+<style>
+
+    .modal-backdrop.in {
+        opacity: 0.5 !important;
+    }
+
+    .ui-datepicker .ui-datepicker-title select {
+        padding: 0px 8px !important;
+        background-position-y: 0px !important;
+    }
+
+    .slider.round {
+        border-radius: 34px;
+    }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+    .ui-datepicker-prev span.ui-icon,
+    .ui-datepicker-next span.ui-icon {
+        background-image: url("https://cdn0.iconfinder.com/data/icons/flat-round-arrow-arrow-head/512/Red_Arrow_Right-512.png");
+        background-size: contain;
+        background-position: center;
+    }
+
+    .ui-datepicker-prev span.ui-icon {
+        transform: rotate(180deg);
+    }
+
+        .ui-datepicker-prev span.ui-icon:focus,
+        .ui-datepicker-next span.ui-icon:focus {
+            outline: none !important;
+        }
+</style>
+<div class="page-title">
+    <div class="row">
+        <div class="col-12">
+            <h3>
+                <span data-translate="FL- 6 List">FL- 6 List</span>
+
+
+                <a class="pull-right" style="font-size:13px!important;margin-right:12px!important;text-decoration:underline!important;cursor:pointer!important" onclick="Send('SPIRITIMPORT')"><i class="fa fa-cloud-download"></i> <span data-translate="IMPORT CREATE">IMPORT CREATE</span></a>
+                <a class="pull-right" style="font-size:13px!important;margin-right:12px!important;text-decoration:underline!important;cursor:pointer!important" onclick="Send('SPIRITEXPORT')"><i class="fa fa-cloud-upload"></i><span data-translate="EXPORT CREATE">EXPORT CREATE</span></a>
+
+
+
+
+            </h3>
+
+            @if (TempData["Alert"] != null)
+            {
+                @Html.Raw(TempData["Alert"])
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label mandatory" data-translate="From Date">From Date</label>
+            @Html.TextBoxFor(s=>s.FromDate,new{@class="form-control", @id="txtFromDate", @onchange="HideGrid()" ,@readonly="readonly" })
+            <span class="text-danger" id="dspFromDate"></span>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label mandatory" data-translate="To Date">To Date</label>
+            @Html.TextBoxFor(s=>s.ToDate,new{@class="form-control", @id="txtToDate", @onchange="HideGrid()" ,@readonly="readonly" })
+            <span class="text-danger" id="dspToDate"></span>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label mandatory" data-translate="Fl-6 NO">Fl-6 NO</label>
+            @Html.TextBoxFor(s=>s.FL6No,new{@class="form-control",id="FL6No"})
+           
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <br />
+            <button type="button" id="btnLoad" class="btn btn-success" data-translate="Load" data-original-title="" title="">Load</button>
+        </div>
+    </div>
+</div>
+
+<table id="grdWorkFlowView" style="width:100%!important" class="table display table-boardered">
+    <thead>
+        <tr style="text-align: center;">
+            <th style="text-align: center;" class="green" data-translate="Type">Type</th>
+            <th style="text-align: center;" class="green" data-translate="FL6 NO">FL6 NO</th>
+            <th style="text-align: center;" class="green" data-translate="FL6 Date">FL6 Date</th>
+            <th style="text-align: center;" class="green" data-translate="Consigner Name">Consigner Name</th>
+            <th style="text-align: center;" class="green" data-translate="Consignee Name">Consignee Name</th>
+            <th style="text-align: center;" class="green" data-translate="FL5 No">FL5 No </th>
+            <th style="text-align: center;" class="green" data-translate="Action">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var listWithoutDuplicates = new List<string>();
+        }
+        @if (Model != null && Model.List.Count() > 0)
+        {
+            foreach (var itm in Model.List.Distinct().ToList())
+            {
+                if (!listWithoutDuplicates.Contains(itm.FL6No)) //we can also use !listWithoutDuplicates.Any(x => x.Equals(item))
+                {
+                    listWithoutDuplicates.Add(itm.FL6No);
+                    <tr>
+                        <td>@itm.Type</td>
+                        <td>@itm.FL6No</td>
+                        <td>@itm.FL6Date</td>
+                        <td>@itm.ConsignerName</td>
+                        <td>@itm.ConsigneeName</td>
+                        <td>@itm.FL5No</td>
+                        <td>
+                            <a title="Report" href="#" onclick="DownloadFile('@itm.FL6No','@itm.FL5No','@itm.Type.Replace(" ", string.Empty)')">
+                                <i class="fa fa-download" style="font-size: 16px"></i>
+                            </a>
+
+                            @*                                 <a title="Click here to Edit" href="javascript:ViewSpriteSixReport('@itm.FL6No','@itm.FL5No','@itm.Type.Replace(" ", string.Empty)')"><i class="fa fa-edit" style="font-size: 16px"></i></a>
+                *@
+                        </td>
+
+                    </tr>
+                }
+
+            }
+        }
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function () {
+        var dataTable = $('#grdWorkFlowView').DataTable();
+    })
+</script>
+<script>
+    function ViewSpriteSixReport(SanctionNo, PermitNo, Type) {
+        window.location.href = "../FL_Six/FL_SixReports?SanctionNo=" + SanctionNo + "&PermitNo=" + PermitNo + "&Type=" + Type;
+    }
+
+
+    function Send(Type) {
+        window.location.href = "../Fl_Six/FL_Six?Type=" + Type;
+    }
+
+    $('#btnLoad').click(function () {
+
+        var FromDate = $("#txtFromDate").val();
+        var ToDate = $("#txtToDate").val();
+        var FL6No = $("#FL6No").val();
+     
+
+        window.location.href = "../Fl_Six/FL_SixList?FromDate=" + FromDate + "&ToDate=" + ToDate + "&FL6No=" + FL6No;
+
+    });
+
+
+    $(document).ready(function () {
+        var dataTable = $('table#grdWorkFlowView').DataTable();
+        $("#txtFromDate").datepicker({
+            dateFormat: "dd-M-yy",
+            maxDate: 0,
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: new Date(),
+            onSelect: function (evnt) {
+                $(this).tooltip("dispose");
+            }
+        });
+        $("#txtFromDate").datepicker("setDate", new Date());
+
+        $("#txtToDate").datepicker({
+            dateFormat: "dd-M-yy",
+            maxDate: 0,
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: new Date(),
+            onSelect: function (evnt) {
+                $(this).tooltip("dispose");
+            }
+        });
+        $("#txtToDate").datepicker("setDate", new Date());
+    });
+
+    async function DownloadFile(GenerateNo, FLNo, Type) {
+        const downloadUrl = "../Fl_Six/DownlloadDierctFileFl6?SanctionNo=" + GenerateNo + "&PermitNo=" + FLNo + "&Type=" + Type;
+        const response = await fetch(downloadUrl);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${Type}_FL6_${FLNo}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+
+</script>

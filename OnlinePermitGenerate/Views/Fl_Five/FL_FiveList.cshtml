@@ -1,0 +1,268 @@
+﻿@model IEMS_WEB.Areas.OnlinePermitGenerate.Models.Response.Fl_FiveListResponse
+@{
+    ViewData["Title"] = "GateEntry";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/assets/js/translator/fl_fivelist.js"></script>
+@* <style>
+    table tr:nth-child(odd) td {
+        background: #EFF3F9 !important;
+        border-color: rgba(83, 70, 134, 0.1019607843) !important;
+        border: 1px solid;
+    }
+
+    th.green {
+        border: 1px solid;
+    }
+
+    table.dataTable.display tbody td {
+        border: 1px solid;
+        border: 1px solid !important;
+    }
+
+
+    table tr:nth-child(even) td {
+        background: #fafafa !important;
+        border-color: rgba(83, 70, 134, 0.1019607843) !important;
+        border: 1px solid;
+    }
+
+    thead, tbody, tfoot, tr, td, th {
+        border-color: rgba(83, 70, 134, 0.1019607843) !important;
+    }
+</style> *@
+<style>
+    .dataTables_wrapper .dataTables_filter {
+        margin-bottom: 0px !important
+    }
+</style>
+
+<script type="text/javascript">
+    // $(document).ready(function () {
+    //     $("#btnNew").click(function () {
+    //         window.location.href = "../Fl_Five/FL_Five";
+    //     });
+    // });
+    function Send(Type) {
+        window.location.href = "../Fl_Five/FL_Five?Type=" + Type;
+    }
+
+    function ViewSpriteReport(SanctionNo, PermitNo, Type) {
+        window.location.href = "../Fl_Five/FL_FiveReports?SanctionNo=" + SanctionNo + "&PermitNo=" + PermitNo + "&Type=" + Type;
+    }
+
+
+
+    function Load() {
+
+        var FromDate = $("#txtFromDate").val();
+        var ToDate = $("#txtToDate").val();
+        var moduleName = $("#moduleName").val();
+        var ReqValues = $("#ReqValues").val();
+        var ReqName = $("#ReqName").val();
+
+        // if (FromDate == "" || FromDate == null || FromDate == undefined) {
+        //     $("#errordspFromDate").text("Insert FromDate").css("color", "red");
+        //     return false;
+        // } else {
+        //     $("#errordspFromDate").html("");
+        // }
+
+        // if (ToDate == "" || ToDate == null || ToDate == undefined) {
+        //     $("#errordspToDate").text("Insert dspToDate").css("color", "red");
+        //     return false;
+        // } else {
+        //     $("#errordspToDate").html("");
+        // }
+
+        // if (ReqName == "" || ReqName == null || ReqName == undefined) {
+        //     $("#errorReqName").text("Insert ReqName").css("color", "red");
+        //     return false;
+        // } else {
+        //     $("#errorReqName").html("");
+        // }
+
+        // if (moduleName == 0 || moduleName == null || moduleName == undefined) {
+        //     $("#errormoduleName").text("Insert moduleName").css("color", "red");
+        //     return false;
+        // } else {
+        //     $("#errormoduleName").html("");
+        // }
+
+        // if (ReqValues == 0 || ReqValues == null || ReqValues == undefined) {
+        //     $("#errorReqValues").text("Insert ReqValues").css("color", "red");
+        //     return false;
+        // } else {
+        //     $("#errorReqValues").html("");
+        // }
+
+
+        window.location.href = "../Fl_Five/FL_FiveList?FromDate=" + FromDate + "&ToDate=" + ToDate + "&ModuleName=" + moduleName + "&ReqValues=" + ReqValues + "&ReqName=" + ReqName;
+    }
+    async function DownloadFile(GenerateNo, FLNo, Type) {
+        const downloadUrl = "../Fl_Five/DownlloadDierctFileFl5?SanctionNo=" + GenerateNo + "&PermitNo=" + FLNo + "&Type=" + Type;
+        const response = await fetch(downloadUrl);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${Type}_FL5_${FLNo}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+
+</script>
+<script>
+    $(document).ready(function () {
+
+        var dataTable = $('table#grdWorkFlowView').DataTable();
+        $("#txtFromDate").datepicker({
+            dateFormat: "dd-M-yy",
+            maxDate: 0,
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: new Date(),
+            onSelect: function (evnt) {
+                $(this).tooltip("dispose");
+            }
+        });
+        $("#txtFromDate").datepicker("setDate", new Date());
+
+        $("#txtToDate").datepicker({
+            dateFormat: "dd-M-yy",
+            maxDate: 0,
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: new Date(),
+            onSelect: function (evnt) {
+                $(this).tooltip("dispose");
+            }
+        });
+        $("#txtToDate").datepicker("setDate", new Date());
+    });
+
+
+</script>
+
+<div class="page-title">
+    <div class="row">
+        <div class="col-12">
+            <h3>
+                <span data-translate="FL-5 List">FL-5 List</span>  <a style="font-size:13px!important;margin-right:12px!important;text-decoration:underline!important;cursor:pointer!important" class="pull-right" onclick="Send('SPIRITIMPORT')"><i class="fa fa-cloud-download"></i> <span data-translate="IMPORT CREATE"></span></a>
+                <a style="font-size:13px!important;margin-right:12px!important;text-decoration:underline!important;cursor:pointer!important" class="pull-right" onclick="Send('SPIRITEXPORT')"><i class="fa fa-cloud-upload"></i> <span data-translate="EXPORT CREATE">EXPORT CREATE</span></a>
+            </h3>
+
+
+            @if (TempData["Alert"] != null)
+            {
+                @Html.Raw(TempData["Alert"])
+            }
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label mandatory" data-translate="From Date">From Date</label>
+            @Html.TextBoxFor(s=>s.FromDate,new{@class="form-control", @id="txtFromDate", @onchange="HideGrid()" ,@readonly="readonly" })
+           @*  <span class="text-danger" id="errordspFromDate"></span> *@
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label mandatory" data-translate="To Date">To Date</label>
+            @Html.TextBoxFor(s=>s.ToDate,new{@class="form-control", @id="txtToDate", @onchange="HideGrid()" ,@readonly="readonly" })
+            @* <span class="text-danger" id="errordspToDate"></span> *@
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label mandatory" data-translate="Request Type">Request Type</label>
+            @Html.DropDownListFor(s=>s.ReqType, new List<SelectListItem>
+            {
+            new SelectListItem { Text = "Sanction No", Value = "SANCTIONNO"},
+            new SelectListItem { Text = "Permit No", Value = "PERMITNO"}
+            }, "Select",new{@class="form-control",@id="ReqName"})
+           @*  <span class="text-danger" id="errorReqName"></span> *@
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label mandatory" data-translate="Module Type">Module Type</label>
+            @Html.DropDownListFor(s=>s.ModuleType, new List<SelectListItem>
+            {
+            new SelectListItem { Text = "SPIRIT IMPORT", Value = "SPIRITIMPORT"},
+            new SelectListItem { Text = "SPIRIT EXPORT", Value = "SPIRITEXPORT"}
+            }, "Select",new{@class="form-control",@id="moduleName"})
+           @*  <span class="text-danger" id="errormoduleName"></span> *@
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="form-group">
+            <label class="form-label mandatory" data-translate="Request Value">Request Value </label>
+            @Html.TextBoxFor(s=>s.ReqValues,new{@class="form-control",id="ReqValues"})
+           @*  <span class="text-danger" id="errorReqValues"></span> *@
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <br />
+            <button type="button" id="btnLoad" onclick="Load()" class="btn btn-success" data-translate="Load" data-original-title="" title="" data-translate="Load">Load</button>
+        </div>
+    </div>
+</div>
+<table id="grdWorkFlowView" style="width:100%" class="table display table-boardered">
+    <thead>
+        <tr style="text-align: center;">
+            <th style="text-align: center;" class="green" data-translate="Type">Type</th>
+            <th style="text-align: center;" class="green" data-translate="Permit No">Permit No</th>
+            <th style="text-align: center;" class="green" data-translate="Sanction NO">Sanction NO</th>
+            <th style="text-align: center;" class="green" data-translate="Consigner">Consigner</th>
+            <th style="text-align: center;" class="green" data-translate="Consignee">Consignee</th>
+            <th style="text-align: center;" class="green" data-translate="Unit">Unit</th>
+            <th style="text-align: center;" class="green" data-translate="Sanction Qty">Sanction Qty </th>
+            <th style="text-align: center;" class="green" data-translate="Requested Qty">Requested Qty </th>
+            <th style="text-align: center;" class="green" data-translate="Action">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var listWithoutDuplicates = new List<string>();
+        }
+        @if (Model != null && Model.List.Count() > 0)
+        {
+            foreach (var itm in Model.List.Distinct().ToList())
+            {
+                if (!listWithoutDuplicates.Contains(itm.FLNo)) //we can also use !listWithoutDuplicates.Any(x => x.Equals(item))
+                {
+                    listWithoutDuplicates.Add(itm.FLNo);
+                    <tr>
+                        <td>@itm.Type</td>
+                        <td>@itm.FLNo</td>
+                        <td>@itm.GenerateNo</td>
+                        <td>@itm.ConsignerName</td>
+                        <td>@itm.ConsigneeName</td>
+                        <td>@itm.Unit</td>
+                        <td>@itm.BalanceSanctionQty</td>
+                        <td>@itm.SanctionQty</td>
+                        <td>
+                            @*                             <a title="Click here to Edit" href="javascript:ViewSpriteReport('@itm.GenerateNo','@itm.FLNo','@itm.Type.Replace(" ", string.Empty)')"><i class="fa fa-edit" style="font-size: 16px"></i></a>
+                *@
+
+                            <a title="Report" href="#" onclick="DownloadFile('@itm.GenerateNo','@itm.FLNo','@itm.Type.Replace(" ", string.Empty)')">
+                                <i class="fa fa-download" style="font-size: 16px"></i>
+                            </a>
+                        </td>
+
+                    </tr>
+                }
+
+            }
+        }
+    </tbody>
+</table>

@@ -1,0 +1,436 @@
+﻿@model IEMS_WEB.Areas.OnlinePermitGenerate.Models.Request.FL_SixSaveRequestModel
+@{
+    ViewBag.Title = "Fl-5";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/assets/js/translator/fl_six.js"></script>
+<div class="page-title">
+    <div class="row">
+        <div class="col-12">
+            <h3 data-translate="IMFL-Permit - (FL6)">
+                IMFL-Permit - (FL6)
+            </h3>
+        </div>
+    </div>
+    @if (TempData["Alert"] != null)
+    {
+        @Html.Raw(TempData["Alert"])
+    }
+</div>
+
+@using (Html.BeginForm("FL_Six", "FL_Six", FormMethod.Post, new { enctype = "multipart/form-data", @class = "needs-validation", @novalidate = "" }))
+{
+    <fieldset class="border p-2">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-3">
+                <label class="form-label" for="SanctionNo" data-translate="Enter Permit Nos">Enter Permit Nos</label>
+                @Html.TextBoxFor(m => m.ResModel.Fl5No, new { @class = "form-control",  @id = "PermitNos" })
+                @Html.ValidationMessageFor(model => model.ResModel.Fl5No, "", new { @class = "text-danger" })
+                <span class="text-danger" id="errorPermitNos"></span>
+            </div>
+            <div class="col-md-3">
+                <br />
+                <button class="btn btn-success" type="button" id="GetPermitdata" data-translate="Load"><i class="fa fa-file"></i>Load</button>
+            </div>
+        </div>
+
+    </fieldset>
+    <fieldset class="border p-2">
+        <legend class="float-none w-auto p-2" data-translate="Permit Details">Permit Details</legend>
+
+        <div class="row g-3 align-items-center">
+
+            <div class="col-md-3">
+                <label class="form-label" for="DEOLIST" data-translate="TP Number">TP Number</label>
+                @Html.TextBoxFor(m => m.model.TPNo, new { @data_val = "false",@class = "form-control",  @id = "TPNo",@readonly="readonly" })
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="SanctionNo" data-translate="TP Issues Date">TP Issues Date</label>
+                @Html.TextBoxFor(m => m.model.TPDate, new { @data_val = "false",@class = "form-control",  @id = "TPIssuesdate",@readonly="readonly" })
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" for="ImportPermitDate" data-translate="Import Permit Date">Import Permit Date</label>
+                @Html.TextBoxFor(m => m.ResModel.Fl5Date, new { @class = "form-control",  @id = "ImportPermitDate" ,@readonly="readonly"})
+                @Html.ValidationMessageFor(model => model.ResModel.Fl5Date, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="ImportPermitDate" data-translate="Sanction No">Sanction No</label>
+                @Html.TextBoxFor(m => m.model.GenerateNo, new { @class = "form-control",  @id = "SanctionNO" ,@readonly="readonly"})
+                @Html.ValidationMessageFor(model => model.model.GenerateNo, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="ImportPermitDate" data-translate="Type">Type</label>
+                @Html.TextBoxFor(m => m.model.Type, new { @class = "form-control",  @id = "Type" ,@readonly="readonly"})
+                @Html.ValidationMessageFor(model => model.model.Type, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+    </fieldset>
+
+    <fieldset class="border p-2">
+        <legend class="float-none w-auto p-2" data-translate="Consigner / Consignee Details">Consigner / Consignee Details</legend>
+        <div class="row g-3 align-items-center">
+            <div class="col-md-3">
+                <label class="form-label" for="ConsignerCategory" data-translate="Consigner Category">Consigner Category</label>
+                @Html.TextBoxFor(m => m.ResModel.ConsignerCategory, new { @class = "form-control",  @id = "ConsignerCategory" ,@readonly="readonly"})
+                @Html.ValidationMessageFor(model => model.ResModel.ConsignerCategory, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="ConsignerName" data-translate="Consigner Name">Consigner Name</label>
+                @Html.HiddenFor(s=>s.ResModel.ConsignerId)
+                @Html.TextBoxFor(m => m.ResModel.ConsignerName, new { @class = "form-control",  @id = "ConsignerName" ,@readonly="readonly"})
+                @Html.ValidationMessageFor(model => model.ResModel.ConsignerName, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" for="ConsignerCity" data-translate="Consigner City">Consigner City</label>
+                @Html.TextBoxFor(m => m.ResModel.ConsignerCity, new { @class = "form-control",  @id = "ConsignerCity" ,@readonly="readonly"})
+                @Html.ValidationMessageFor(model => model.ResModel.ConsignerCity, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="ConsigneeCategory" data-translate="Consignee Category">Consignee Category</label>
+                @Html.TextBoxFor(m => m.ResModel.ConsigneeCategory, new { @class = "form-control",  @id = "ConsigneeCategory" ,@readonly="readonly"})
+                @Html.ValidationMessageFor(model => model.ResModel.ConsigneeCategory, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="Consigneename" data-translate="Consignee Name">Consignee Name</label>
+                @Html.HiddenFor(s=>s.ResModel.ConsigneeId)
+                @Html.TextBoxFor(m => m.ResModel.ConsigneeName, new { @class = "form-control",  @id = "ConsigneeName" ,@readonly="readonly"})
+                @Html.ValidationMessageFor(model => model.ResModel.ConsigneeName, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" for="ConsigneeCity" data-translate="Consignee City">Consignee City</label>
+                @Html.TextBoxFor(m => m.ResModel.ConsigneeCity, new { @class = "form-control",  @id = "ConsigneeCity" ,@readonly="readonly"})
+                @Html.ValidationMessageFor(model => model.ResModel.ConsigneeCity, "", new { @class = "text-danger" })
+            </div>
+
+        </div>
+    </fieldset>
+    <fieldset class="border p-2">
+        <legend class="float-none w-auto p-2" data-translate="Permit Details">Permit Details</legend>
+        <div class="row g-3 align-items-center">
+            <div class="col-md-3">
+                <label class="form-label" for="TotalBLQTY" data-translate="Total QTY (BL)">Total QTY (BL)</label>
+                @Html.TextBoxFor(m => m.ResModel.TotalBl, new { @class = "form-control",  @id = "TotalBLQTY" ,@readonly="readonly"})
+                @Html.ValidationMessageFor(model => model.ResModel.ConsigneeCity, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="ConsigneeCategory" data-translate="Total QTY (LPL)">Total QTY (LPL)</label>
+                @Html.TextBoxFor(m => m.ResModel.TotalLPL, new { @class = "form-control",  @id = "TotalLPLQTY" ,@readonly="readonly"})
+                @Html.ValidationMessageFor(model => model.ResModel.ConsigneeCity, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" for="TruckNo" data-translate="Truck No">Truck No</label>
+                @Html.TextBoxFor(m => m.model.TruckNo, new { @class = "form-control",  @id = "TruckNo", @required = "required" })
+                @Html.ValidationMessageFor(model => model.model.TruckNo, "", new { @class = "text-danger" })
+
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" for="ConsigneeCategory" data-translate="Person carrying Consignee">Person carrying Consignee</label>
+                @Html.TextBoxFor(m => m.model.PersonCarrying, new { @class = "form-control",  @id = "PersonConsig",@required = "required" })
+                @Html.ValidationMessageFor(model => model.model.PersonCarrying, "", new { @class = "text-danger" })
+
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" for="ConsigneeCategory" data-translate="Validity(In Days)">Validity(In Days)</label>
+                @Html.TextBoxFor(m => m.model.ValidityDay, new { @class = "form-control",  @id = "ValidityDay",@required = "required" })
+                @Html.ValidationMessageFor(model => model.model.ValidityDay, "", new { @class = "text-danger" })
+
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" for="ConsigneeCategory" data-translate="Validity Date">Validity Date</label>
+                @Html.TextBoxFor(m => m.model.ValidityDate, new { @class = "form-control",  @id = "ValidityDate" ,@readonly="readonly"})
+                @Html.ValidationMessageFor(model => model.model.ValidityDate, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" for="ConsigneeCategory" data-translate="Transport Mode">Transport Mode</label>
+                @Html.DropDownListFor(s => s.model.TransportMode,(List<SelectListItem>)ViewBag.TransportLIST, new { @class = "form-control js-example-basic-single TransportMode",id = "TransportMode",@required = "required"})
+                @Html.ValidationMessageFor(model => model.model.TransportMode, "", new { @class = "text-danger" })
+
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="ConsigneeCategory" data-translate="Strength (%)">Strength (%)</label>
+                @Html.TextBoxFor(m => m.ResModel.Strength, new { @class = "form-control",  @id = "Strength" ,@readonly="readonly"})
+                @Html.ValidationMessageFor(model => model.ResModel.Strength, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" for="ConsigneeCategory" data-translate="Route">Route</label>
+                @Html.DropDownListFor(m => m.model.RouteID, ViewBag.RouteList as List<SelectListItem>, new { @class = "form-select", @id = "RouteID" ,@readonly="readonly" })
+                @Html.ValidationMessageFor(model => model.model.RouteID, "", new { @class = "text-danger" })
+
+            </div>
+        </div>
+
+    </fieldset>
+
+    <br />
+    <div class="text-center" id="SaveButton">
+        @if (Model.BtnDisbled == 1)
+        {
+            <button class="btn btn-success" type="submit" class="btnSubmit" id="btnSubmit" data-translate="Save"><i class="fa fa-file"></i>Save</button>
+        }
+        else
+        {
+            <button class="btn btn-success" type="button" class="btnSubmit" disabled="disabled" data-translate="Save"><i class="fa fa-file"></i>Save</button>
+
+        }
+        <button type="button" id="BackBtn" class="btn btn-primary" data-translate="BACK">BACK</button>
+    </div>
+
+
+
+}
+@* <script src="~/assets/js/jquery-3.6.0.min.js"></script>
+ *@<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js" integrity="sha512-WMEKGZ7L5LWgaPeJtw9MBM4i5w5OSBlSjTjCtSnvFJGSVD26gE5+Td12qN5pvWXhuWaWcVwF++F7aqu9cvqP0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+
+<script>
+    $("#BackBtn").click(function () {
+        window.location.href = "../Fl_Six/Fl_SixList";
+    });
+    $("#TPIssuesdate").datepicker({
+        dateFormat: "dd-M-yy",
+        maxDate: 0,
+        minDate: 0,
+        changeMonth: true,
+        changeYear: true,
+        defaultDate: new Date(),
+        onSelect: function (evnt) {
+            $(this).tooltip("dispose");
+        }
+    });
+    $("#TPIssuesdate").datepicker("setDate", new Date());
+
+
+</script>
+<script>
+
+    ; (function ($, window, document, undefined) {
+        $("#ValidityDay").on("change", function () {
+            var date = new Date(),
+                days = parseInt($("#ValidityDay").val(), 10);
+
+            if (!isNaN(date.getTime()) && days > 0) {
+                date.setDate(date.getDate() + days);
+
+                $("#ValidityDate").val(date.toInputFormat("yyyy-MMM-dd"));
+            } else {
+                alert("Same date Invalid");
+                $("#ValidityDate").val('');
+            }
+        });
+
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ];
+        //From: http://stackoverflow.com/questions/3066586/get-string-in-yyyymmdd-format-from-js-date-object
+        Date.prototype.toInputFormat = function () {
+            var yyyy = this.getFullYear().toString();
+            var mm = (this.getMonth() + 1).toString(); // getMonth() is zero-based
+            var dd = this.getDate().toString();
+            // return yyyy + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + (dd[1] ? dd : "0" + dd[0]); // padding
+            return (dd[1] ? dd : "0" + dd[0]) + "-" + monthNames[(mm[1] ? mm : "0" + mm[0]) - 1] + "-" + yyyy;
+        };
+    })(jQuery, this, document);
+</script>
+
+<script>
+
+
+
+    $("#GetPermitdata").click(function () {
+        var data = $("#PermitNos").val();
+        var Type = $("#Type").val();
+        if (data == "" || data == 0 || data == null || data == undefined) {
+            $("#errorPermitNos").text("Insert PermitNos").css("color", "red");
+            return false;
+        }
+        else {
+            $("#errorPermitNos").html("");
+        }
+        if (data != null && data != "") {
+            window.location.href = "../Fl_Six/Fl_Six?PermitNO=" + data + "&Type=" + Type;
+        }
+
+    })
+
+</script>
+
+<style>
+    table.dataTable input, table.dataTable select {
+        height: auto !important;
+    }
+
+    table td {
+        border: 1px solid #d4d4d4 !important;
+    }
+
+    input.Actionstyle {
+        background-color: transparent !important;
+        border: 0px !important;
+        width: 100% !important;
+        text-align: left;
+    }
+
+    .caret {
+        display: inline-block;
+        width: 0;
+        height: 0;
+        margin-left: 2px;
+        vertical-align: middle;
+        border-top: 4px dashed;
+        border-top: 4px solid\9;
+        border-right: 4px solid transparent;
+        border-left: 4px solid transparent
+    }
+
+    .dropdown,
+    .dropup {
+        position: relative
+    }
+
+    .dropdown-toggle:focus {
+        outline: 0
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1000;
+        display: none;
+        float: left;
+        min-width: 160px;
+        padding: 5px 0;
+        margin: 2px 0 0;
+        font-size: 14px;
+        text-align: left;
+        list-style: none;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ccc;
+        border: 1px solid rgba(0, 0, 0, .15);
+        border-radius: 4px;
+        -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, .175)
+    }
+
+        .dropdown-menu.pull-right {
+            right: 0;
+            left: auto
+        }
+
+        .dropdown-menu .divider {
+            height: 1px;
+            margin: 9px 0;
+            overflow: hidden;
+            background-color: #e5e5e5
+        }
+
+        .dropdown-menu > li > a {
+            display: block;
+            padding: 3px 20px;
+            clear: both;
+            font-weight: 400;
+            line-height: 1.42857143;
+            color: #333;
+            white-space: nowrap
+        }
+
+            .dropdown-menu > li > a:focus,
+            .dropdown-menu > li > a:hover {
+                color: #262626;
+                text-decoration: none;
+                background-color: #f5f5f5
+            }
+
+        .dropdown-menu > .active > a,
+        .dropdown-menu > .active > a:focus,
+        .dropdown-menu > .active > a:hover {
+            color: #fff;
+            text-decoration: none;
+            background-color: #337ab7;
+            outline: 0
+        }
+
+        .dropdown-menu > .disabled > a,
+        .dropdown-menu > .disabled > a:focus,
+        .dropdown-menu > .disabled > a:hover {
+            color: #777
+        }
+
+            .dropdown-menu > .disabled > a:focus,
+            .dropdown-menu > .disabled > a:hover {
+                text-decoration: none;
+                cursor: not-allowed;
+                background-color: transparent;
+                background-image: none;
+                filter: progid:DXImageTransform.Microsoft.gradient(enabled=false)
+            }
+
+    .open > .dropdown-menu {
+        display: block
+    }
+
+    .open > a {
+        outline: 0
+    }
+
+    .dropdown-menu-right {
+        right: 0;
+        left: auto
+    }
+
+    .dropdown-menu-left {
+        right: auto;
+        left: 0
+    }
+
+    .dropdown-header {
+        display: block;
+        padding: 3px 20px;
+        font-size: 12px;
+        line-height: 1.42857143;
+        color: #777;
+        white-space: nowrap
+    }
+
+    .dropdown-backdrop {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 990
+    }
+
+    .pull-right > .dropdown-menu {
+        right: 0;
+        left: auto
+    }
+
+    .dropup .caret,
+    .navbar-fixed-bottom .dropdown .caret {
+        content: "";
+        border-top: 0;
+        border-bottom: 4px dashed;
+        border-bottom: 4px solid\9
+    }
+
+    .dropup .dropdown-menu,
+    .navbar-fixed-bottom .dropdown .dropdown-menu {
+        top: auto;
+        bottom: 100%;
+        margin-bottom: 2px
+    }
+</style>

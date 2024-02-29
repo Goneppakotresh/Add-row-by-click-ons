@@ -1,0 +1,263 @@
+﻿@model IEMS_WEB.Areas.OnlinePermitGenerate.Models.Request.FL_SixSaveRequestModel
+
+<style>
+    .product-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px; /* Add margin for separation */
+    }
+
+        .product-table th, .product-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .product-table th {
+            background-color: #f2f2f2;
+        }
+
+    .challan-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px; /* Add margin for separation */
+    }
+
+        .challan-table th, .challan-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .challan-table th {
+            background-color: #f2f2f2;
+        }
+
+
+    .inline-label {
+        display: inline-block;
+        margin-right: 10px; /* Adjust as needed */
+    }
+
+
+    .table-container {
+        display: inline-block;
+        margin-right: 20px; /* Adjust as needed */
+    }
+
+    .route-container {
+        display: flex;
+        align-items: baseline; /* Align items at the baseline to keep them on the same line */
+        margin-bottom: 10px; /* Adjust as needed */
+    }
+
+    .route-label {
+        margin-right: 10px; /* Adjust as needed for spacing between label and value */
+        font-weight: bold; /* Make the label bold if desired */
+    }
+
+    .route-value {
+        margin-right: 20px; /* Add some space after the data */
+    }
+
+    .route-container {
+        margin-bottom: 10px; /* Adjust as needed */
+    }
+
+    .route-label,
+    .route-value {
+        display: inline-block;
+        margin-right: 20px; /* Adjust as needed for space between elements */
+    }
+
+    .route-label {
+        font-weight: bold; /* Make the label bold if desired */
+    }
+
+    .part {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    #pdf {
+    }
+</style>
+
+
+
+<div>
+
+
+    <div class="container">
+        <label>
+            <b> TP NO:</b>
+            @Model.model.TPNo
+        </label>
+
+        <label><b>Date Of TP: </b>@Model.model.TPDate</label>
+
+    </div>
+
+    <table>
+        <tr>
+            <td>
+                <label><b>Distillery/Godown Name</b></label>
+            </td>
+            <td>
+                <b>: &nbsp;</b>@Model.ResModel.ConsignerName
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label><b>Address</b></label>
+            </td>
+            <td>
+                <b>: &nbsp;</b> @Model.ResModel.ConsignerAddress
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label><b>Consignee Name</b></label>
+            </td>
+            <td>
+                <b>: &nbsp;</b>   @Model.ResModel.ConsigneeName;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label><b>Address</b></label>
+            </td>
+            <td>
+                <b>: &nbsp;</b>  @Model.ResModel.ConsigneeAddress;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label><b>FL5 NO</b></label>
+            </td>
+            <td>
+                <b>: &nbsp;</b>    @Model.ResModel.Fl5No;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label><b>Validity Date</b></label>
+            </td>
+            <td>
+                <b>: &nbsp;</b>   @Model.model.ValidityDate
+            </td>
+        </tr>
+        <tr>
+            <td><b>Days</b></td>
+            <b>: &nbsp;</b>
+            <td>@Model.model.ValidityDay</td>
+        </tr>
+        <tr>
+            <td>
+                <label><b>Vehicle No</b></label>
+            </td>
+            <td>
+                <b>: &nbsp;</b>    @Model.model.TruckNo;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label><b>Person Carrying Consigment</b></label>
+            </td>
+            <td>
+                <b>: &nbsp;</b>     @Model.model.PersonCarrying;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label><b>Route</b></label>
+            </td>
+            <td>
+                <b>: &nbsp;</b>   @Model.model.RouteID
+            </td>
+        </tr>
+    </table>
+    <label>
+        <b> Product Detail</b>
+    </label>
+    @*  @foreach (var itm in Model.model.)
+    { *@
+    <table class="tb1">
+        <tr>
+            <th>SNo.</th>
+            <th>Product</th>
+            <th>Brand</th>
+            <th>Packing</th>
+            <th>Batch NO </th>
+            <th>Qty(Case)</th>
+            <th>Qty(BL)</th>
+            <th>Strength</th>
+            <th>Qty(LPL)</th>
+            <th>Duty Rate</th>
+            <th>Duty Paid</th>
+        </tr>
+        @*  <tr>
+        <td>1</td>
+        <td>@itm.Product</td>
+        <td>@itm.Brand</td>
+        <td>@itm.Packing</td>
+
+        <td>@itm.BatchNo</td>
+
+        <td>@itm.Qtycase</td>
+        <td>@itm.QtyBl</td>
+        <td>@itm.Strength</td>
+        <td>@itm.Qtylpl</td>
+        <td>@itm.DutyRate</td>
+        <td>@itm.DutyPaid</td>
+        </tr> *@
+    </table>
+    @*  } *@
+    <label>
+        <b>  CC to :</b>
+    </label>
+    <br />
+    <label><b>DEO(Consignee):</b> </label>
+    <label>test</label>
+    <br />
+    <label><b>DEO(Consigner):</b> </label>
+    <label>test</label>
+    @*  @foreach (var itm in Model.ProductList)
+    { *@
+    <table class="tb1">
+        <tr>
+            <th rowspan="2">SNo.</th>
+            <th rowspan="2">Product</th>
+            <th rowspan="2">Brand</th>
+            <th rowspan="2">Packing</th>
+            <th rowspan="2">Batch NO </th>
+            <th colspan="3">TP</th>
+            <th colspan="2">Watage</th>
+        </tr>
+        <tr>
+            <th>Qty(BL)</th>
+            <th>Strength</th>
+            <th>Qty(LPL)</th>
+            <th>Qty(BL)</th>
+            <th>Qty(LPL)</th>
+        </tr>
+        <tr>
+            @*  <td>1</td>
+            <td>@itm.Product</td>
+            <td>@itm.Brand</td>
+            <td>@itm.Packing</td>
+            <td>@itm.BatchNo</td>
+            <td>@itm.QtyBl</td>
+            <td>@itm.Strength</td>
+            <td>@itm.Qtylpl</td>
+            <td>@itm.QtyBl</td>
+            <td>@itm.Qtylpl</td> *@
+        </tr>
+    </table>
+    @*  } *@
+    <div style="font-weight:bolder; margin-top:10px">
+        <span>Authorised Signature</span>
+        <span style="float:right">Authorised Signature</span>
+    </div>
+
+</div>
